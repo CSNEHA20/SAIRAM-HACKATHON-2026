@@ -2,12 +2,15 @@ import aiosqlite
 from typing import Any, Dict, List, Optional
 from db.connection import db_manager
 
-async def get_schema(table_filter: Optional[List[str]] = None) -> Dict[str, Any]:
+async def get_schema(table_filter: Optional[Any] = None) -> Dict[str, Any]:
     """
     Discovers database schema dynamically using SQLite PRAGMA commands.
     Returns structured table metadata including columns, types, primary keys, foreign keys, and row counts.
     """
     try:
+        if isinstance(table_filter, str):
+            table_filter = [table_filter] if table_filter.strip() else None
+
         async with aiosqlite.connect(db_manager.db_path) as conn:
             conn.row_factory = aiosqlite.Row
             # 1. Fetch table names from sqlite_master
@@ -49,6 +52,7 @@ async def get_schema(table_filter: Optional[List[str]] = None) -> Dict[str, Any]
                             "name": col["name"],
                             "type": col["type"],
                             "pk": bool(col["pk"]),
+                            "nullable": not bool(col["notnull"]),
                             "notnull": bool(col["notnull"])
                         }
                         for col in col_rows
@@ -59,6 +63,9 @@ async def get_schema(table_filter: Optional[List[str]] = None) -> Dict[str, Any]
                     fk_rows = await cursor.fetchall()
                     foreign_keys = [
                         {
+                            "from": fk["from"],
+                            "table": fk["table"],
+                            "to": fk["to"],
                             "from_column": fk["from"],
                             "target_table": fk["table"],
                             "target_column": fk["to"]
@@ -88,3 +95,4 @@ async def get_schema(table_filter: Optional[List[str]] = None) -> Dict[str, Any]
             "success": False,
             "error": f"Failed to retrieve schema: {str(e)}"
         }
+

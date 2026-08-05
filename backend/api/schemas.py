@@ -49,3 +49,8 @@ class HealthResponse(BaseModel):
     database: str
     claude_api: str
     version: str = "1.0.0"
+
+class ExportRequest(BaseModel):
+    sql: str = Field(..., description="SQL SELECT query to execute and export")
+    filename: Optional[str] = Field(default="export", description="Base filename without extension")
+

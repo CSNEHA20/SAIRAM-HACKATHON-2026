@@ -85,3 +85,27 @@ export interface ChatState {
   activeTool: string | null;
   sessionId: string;
 }
+
+export interface SchemaColumn {
+  name: string;
+  type: string;
+  pk: boolean;
+  nullable: boolean;
+}
+
+export interface SchemaForeignKey {
+  from?: string;
+  table?: string;
+  to?: string;
+  from_column?: string;
+  target_table?: string;
+  target_column?: string;
+}
+
+export interface SchemaTable {
+  name: string;
+  columns: SchemaColumn[];
+  foreign_keys: SchemaForeignKey[];
+  row_count: number;
+}
+

@@ -2,8 +2,11 @@ import json
 from typing import Any, Dict, List, Optional
 from tools.get_schema import get_schema
 from tools.execute_query import execute_query
+from tools.generate_chart import generate_chart
+from tools.generate_flowchart import generate_flowchart
+from tools.explain_data import explain_data
 
-# JSON Schemas for Anthropic Messages API (30_ToolSpecifications.md)
+# JSON Schemas for Anthropic Messages API (07_ToolSpecifications.md)
 TOOL_SCHEMAS = [
     {
         "name": "get_schema",
@@ -128,140 +131,7 @@ TOOL_SCHEMAS = [
     }
 ]
 
-# Implementation functions for visualization & insight tools
-async def generate_chart(
-    chart_type: str,
-    data: List[Dict[str, Any]],
-    x_key: str,
-    y_key: str,
-    title: Optional[str] = None,
-    x_label: Optional[str] = None,
-    y_label: Optional[str] = None,
-    color: Optional[str] = None,
-    **kwargs
-) -> Dict[str, Any]:
-    """30_ToolSpecifications.md §30.3 - generate_chart tool implementation."""
-    if chart_type not in ["bar", "line", "pie", "scatter"]:
-        return {
-            "success": False,
-            "error": f"Invalid chart_type '{chart_type}'. Must be one of: bar, line, pie, scatter."
-        }
-    if not data:
-        return {"success": False, "error": "Cannot generate chart: dataset is empty."}
-    
-    first_row = data[0]
-    if x_key not in first_row or y_key not in first_row:
-        available = list(first_row.keys())
-        return {
-            "success": False,
-            "error": f"Keys '{x_key}' or '{y_key}' not found in dataset.",
-            "hint": f"Available columns in data: {', '.join(available)}"
-        }
-
-    return {
-        "success": True,
-        "chart_type": chart_type,
-        "title": title or f"{chart_type.capitalize()} Chart: {y_key} by {x_key}",
-        "data": data,
-        "config": {
-            "x_key": x_key,
-            "y_key": y_key,
-            "x_label": x_label or x_key,
-            "y_label": y_label or y_key,
-            "color": color or "#6366f1"
-        }
-    }
-
-async def generate_flowchart(
-    diagram_type: str,
-    mermaid_code: Optional[str] = None,
-    schema_data: Optional[Dict[str, Any]] = None,
-    title: Optional[str] = None,
-    **kwargs
-) -> Dict[str, Any]:
-    """30_ToolSpecifications.md §30.4 - generate_flowchart tool implementation."""
-    if diagram_type not in ["er", "flowchart", "sequence"]:
-        return {
-            "success": False,
-            "error": f"Invalid diagram_type '{diagram_type}'. Must be one of: er, flowchart, sequence."
-        }
-
-    # Path A: Auto-ER from schema_data
-    if schema_data and "tables" in schema_data:
-        mermaid_lines = ["erDiagram"]
-        tables = schema_data["tables"]
-        for t in tables:
-            tname = t["name"].upper()
-            mermaid_lines.append(f"    {tname} {{")
-            for c in t.get("columns", []):
-                ctype = c.get("type", "TEXT")
-                cname = c.get("name")
-                pk = "PK" if c.get("pk") else ""
-                mermaid_lines.append(f"        {ctype} {cname} {pk}".strip())
-            mermaid_lines.append("    }")
-
-            for fk in t.get("foreign_keys", []):
-                target = fk.get("target_table", "").upper()
-                if target:
-                    mermaid_lines.append(f"    {tname} ||--o{{ {target} : \"references\"")
-        
-        return {
-            "success": True,
-            "diagram_type": "er",
-            "title": title or "Database ER Diagram",
-            "mermaid": "\n".join(mermaid_lines)
-        }
-
-    # Path B: User/LLM provided mermaid_code
-    if mermaid_code:
-        return {
-            "success": True,
-            "diagram_type": diagram_type,
-            "title": title or f"{diagram_type.capitalize()} Diagram",
-            "mermaid": mermaid_code.strip()
-        }
-
-    return {
-        "success": False,
-        "error": "Either mermaid_code or schema_data must be provided to generate a flowchart."
-    }
-
-async def explain_data(
-    data: List[Dict[str, Any]],
-    columns: List[str],
-    context: Optional[str] = None,
-    insight_type: Optional[str] = "summary",
-    **kwargs
-) -> Dict[str, Any]:
-    """30_ToolSpecifications.md §30.5 - explain_data tool implementation."""
-    if not data:
-        return {"success": False, "error": "data array is empty — no rows to explain."}
-
-    row_count = len(data)
-    numeric_metrics: Dict[str, Any] = {}
-
-    # Compute basic aggregations for numeric columns
-    for col in columns:
-        vals = [row[col] for row in data if col in row and isinstance(row[col], (int, float))]
-        if vals:
-            numeric_metrics[col] = {
-                "total": round(sum(vals), 2),
-                "average": round(sum(vals) / len(vals), 2),
-                "min": min(vals),
-                "max": max(vals)
-            }
-
-    return {
-        "success": True,
-        "insight_type": insight_type,
-        "summary": f"Dataset contains {row_count} rows across {len(columns)} columns.",
-        "key_metrics": {
-            "row_count": row_count,
-            "numeric_aggregates": numeric_metrics
-        }
-    }
-
-# TOOL_MAP registry dispatch map (06_ToolArchitecture.md §2)
+# TOOL_MAP registry dispatch map
 TOOL_MAP = {
     "get_schema": get_schema,
     "execute_query": execute_query,
@@ -273,7 +143,7 @@ TOOL_MAP = {
 async def execute_tool(name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
     """
     Registry entrypoint: dispatches tool name to implementation.
-    Enforces exception safety and returns structured envelope (06_ToolArchitecture.md §2).
+    Enforces exception safety and returns structured envelope.
     """
     if name not in TOOL_MAP:
         return {
@@ -283,16 +153,10 @@ async def execute_tool(name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
     tool_func = TOOL_MAP[name]
     try:
-        if name == "get_schema":
-            table_filter = inputs.get("table_filter")
-            return await tool_func(table_filter=table_filter)
-        elif name == "execute_query":
-            sql = inputs.get("sql", "")
-            return await tool_func(sql=sql)
-        else:
-            return await tool_func(**inputs)
+        return await tool_func(**inputs)
     except Exception as e:
         return {
             "success": False,
             "error": f"Tool execution exception in {name}: {str(e)}"
         }
+

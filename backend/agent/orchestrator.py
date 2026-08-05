@@ -234,7 +234,57 @@ class AgentOrchestrator:
 
         await asyncio.sleep(0.05)
 
-        # Step 3: Stream response text tokens
+        # Step 3: Optional chart or diagram step in offline mode
+        if ("chart" in lower_msg or "bar" in lower_msg or "pie" in lower_msg or "line" in lower_msg) and query_res.get("success") and query_res.get("rows"):
+            yield format_sse({"type": "tool_start", "tool": "generate_chart"})
+            chart_type = "pie" if "pie" in lower_msg else ("line" if "line" in lower_msg else "bar")
+            rows = query_res["rows"]
+            cols = list(rows[0].keys()) if rows else []
+            x_key = cols[1] if len(cols) > 1 else (cols[0] if cols else "name")
+            y_key = cols[3] if len(cols) > 3 else (cols[-1] if cols else "price")
+            
+            chart_res = await execute_tool("generate_chart", {
+                "chart_type": chart_type,
+                "data": rows,
+                "x_key": x_key,
+                "y_key": y_key,
+                "title": f"Top Products Visualization ({chart_type.capitalize()})"
+            })
+            yield format_sse({
+                "type": "tool_end",
+                "tool": "generate_chart",
+                "success": chart_res.get("success", False)
+            })
+            if chart_res.get("success"):
+                yield format_sse({
+                    "type": "chart",
+                    "chart_type": chart_res.get("chart_type", "bar"),
+                    "title": chart_res.get("title", ""),
+                    "data": chart_res.get("data", []),
+                    "config": chart_res.get("config", {})
+                })
+
+        if "diagram" in lower_msg or "er" in lower_msg or "flowchart" in lower_msg or "relationship" in lower_msg:
+            yield format_sse({"type": "tool_start", "tool": "generate_flowchart"})
+            diag_res = await execute_tool("generate_flowchart", {
+                "diagram_type": "er",
+                "schema_data": schema_res,
+                "title": "E-Commerce Database Schema ER Diagram"
+            })
+            yield format_sse({
+                "type": "tool_end",
+                "tool": "generate_flowchart",
+                "success": diag_res.get("success", False)
+            })
+            if diag_res.get("success"):
+                yield format_sse({
+                    "type": "diagram",
+                    "diagram_type": diag_res.get("diagram_type", "er"),
+                    "title": diag_res.get("title", ""),
+                    "mermaid": diag_res.get("mermaid", "")
+                })
+
+        # Step 4: Stream response text tokens
         rows_count = query_res.get("row_count", 0)
         tables_count = schema_res.get("total_tables", 5)
 
@@ -260,3 +310,4 @@ class AgentOrchestrator:
         yield format_sse({"type": "done", "message_id": message_id})
 
 agent_orchestrator = AgentOrchestrator()
+

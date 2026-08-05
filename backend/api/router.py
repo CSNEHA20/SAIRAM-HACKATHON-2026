@@ -155,3 +155,36 @@ async def direct_schema_introspection():
         tables=res["tables"],
         total_tables=res["total_tables"]
     )
+
+import csv
+import io
+from fastapi.responses import Response
+from api.schemas import ExportRequest
+
+@router.post("/export/csv")
+async def export_csv(req: ExportRequest):
+    """POST /api/export/csv - Execute SELECT query and stream CSV file download."""
+    res = await execute_query(req.sql)
+    if not res.get("success"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"code": "SQL_UNSAFE" if "Forbidden" in res.get("error", "") else "DB_ERROR", "message": res.get("error")}
+        )
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    cols = res.get("columns", [])
+    writer.writerow(cols)
+    for row in res.get("rows", []):
+        writer.writerow([row.get(col, "") for col in cols])
+        
+    filename = req.filename or "export"
+    if not filename.endswith(".csv"):
+        filename = f"{filename}.csv"
+        
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+

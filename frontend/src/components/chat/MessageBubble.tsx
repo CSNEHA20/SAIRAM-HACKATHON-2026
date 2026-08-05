@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { IMessage } from '../../types';
 import { Bot, User, Code2, ChevronDown, ChevronUp, Copy, Check, AlertCircle } from 'lucide-react';
+import { ChartRenderer } from '../charts/ChartRenderer';
+import { DiagramRenderer } from '../diagrams/DiagramRenderer';
+import { ExportButton } from './ExportButton';
 
 interface MessageBubbleProps {
   message: IMessage;
@@ -10,6 +14,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isUser = message.role === 'user';
   const [showSql, setShowSql] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
+  const bubbleRef = useRef<HTMLDivElement>(null);
 
   const handleCopySql = (sql: string) => {
     navigator.clipboard.writeText(sql);
@@ -31,32 +36,15 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       </div>
 
       {/* Bubble Container */}
-      <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 text-sm leading-relaxed ${
-        isUser ? 'glass-bubble-user text-slate-100' : 'glass-bubble-assistant text-slate-200'
-      }`}>
-
-        {/* Message Content */}
-        <div className="whitespace-pre-wrap font-normal">
-          {message.content}
-          {message.isStreaming && (
-            <span className="inline-block w-2 h-4 ml-1 bg-cyan-400 animate-pulse rounded-sm vertical-middle" />
-          )}
-        </div>
-
-        {/* Error Callout */}
-        {message.error && (
-          <div className="mt-3 p-3 rounded-xl bg-red-950/60 border border-red-800/80 text-red-300 text-xs flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold">Execution Error</p>
-              <p className="mt-0.5 opacity-90">{message.error}</p>
-            </div>
-          </div>
-        )}
-
-        {/* SQL Transparency Badge (08_APIArchitecture.md & 17_DeveloperB.md §3) */}
+      <div
+        ref={bubbleRef}
+        className={`max-w-[90%] md:max-w-[80%] rounded-2xl p-4 text-sm leading-relaxed ${
+          isUser ? 'glass-bubble-user text-slate-100' : 'glass-bubble-assistant text-slate-200'
+        }`}
+      >
+        {/* SQL Transparency Badge */}
         {message.sql_used && message.sql_used.length > 0 && (
-          <div className="mt-3.5 border-t border-slate-800/80 pt-2.5">
+          <div className="mb-3 border-b border-slate-800/80 pb-2.5">
             <button
               onClick={() => setShowSql(!showSql)}
               className="flex items-center justify-between w-full text-xs font-mono text-cyan-400 hover:text-cyan-300 py-1 transition-colors"
@@ -85,6 +73,48 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
               </div>
             )}
           </div>
+        )}
+
+        {/* Charts */}
+        {message.charts && message.charts.length > 0 && (
+          <div className="space-y-3">
+            {message.charts.map((chart, idx) => (
+              <ChartRenderer key={idx} chart={chart} />
+            ))}
+          </div>
+        )}
+
+        {/* Diagrams */}
+        {message.diagrams && message.diagrams.length > 0 && (
+          <div className="space-y-3">
+            {message.diagrams.map((diag, idx) => (
+              <DiagramRenderer key={idx} diagram={diag} />
+            ))}
+          </div>
+        )}
+
+        {/* Markdown Content */}
+        <div className="markdown-content font-normal text-slate-200">
+          <ReactMarkdown>{message.content}</ReactMarkdown>
+          {message.isStreaming && (
+            <span className="inline-block w-2 h-4 ml-1 bg-cyan-400 animate-pulse rounded-sm align-middle" />
+          )}
+        </div>
+
+        {/* Error Callout */}
+        {message.error && (
+          <div className="mt-3 p-3 rounded-xl bg-red-950/60 border border-red-800/80 text-red-300 text-xs flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold">Execution Error</p>
+              <p className="mt-0.5 opacity-90">{message.error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Export Options */}
+        {!isUser && !message.isStreaming && (
+          <ExportButton sqlUsed={message.sql_used} containerRef={bubbleRef} />
         )}
 
         {/* Timestamp */}

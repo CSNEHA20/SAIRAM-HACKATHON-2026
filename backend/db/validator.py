@@ -13,7 +13,7 @@ class SQLValidator:
     """SELECT-only query validator and LIMIT policy enforcer."""
     
     @staticmethod
-    def validate_and_format(sql: str) -> Tuple[bool, str]:
+    def validate_and_format(sql: str, limit: int = DEFAULT_LIMIT) -> Tuple[bool, str]:
         """
         Validates that the SQL is a safe SELECT statement and enforces LIMIT policies.
         Returns:
@@ -26,7 +26,7 @@ class SQLValidator:
         clean_sql = sql.strip().rstrip(";")
         
         # Rule 1: Must start with SELECT (case-insensitive)
-        if not re.match(r"^\s*SELECT\b", clean_sql, re.IGNORECASE):
+        if not re.match(r"^\s*(WITH|SELECT)\b", clean_sql, re.IGNORECASE):
             return False, "Only SELECT queries are allowed for data safety."
 
         # Rule 2: Check for forbidden mutation keywords
@@ -36,12 +36,13 @@ class SQLValidator:
                 return False, f"Forbidden SQL command detected: {token}. Only read-only queries are permitted."
 
         # Rule 3 & 4: Limit policy enforcement
+        effective_limit = min(limit if limit and limit > 0 else DEFAULT_LIMIT, MAX_LIMIT)
+
         # Check if query already has a LIMIT clause
         limit_match = re.search(r"\bLIMIT\s+(\d+)", clean_sql, re.IGNORECASE)
         if limit_match:
             existing_limit = int(limit_match.group(1))
             if existing_limit > MAX_LIMIT:
-                # Cap to MAX_LIMIT
                 clean_sql = re.sub(
                     r"\bLIMIT\s+\d+",
                     f"LIMIT {MAX_LIMIT}",
@@ -49,8 +50,7 @@ class SQLValidator:
                     flags=re.IGNORECASE
                 )
         else:
-            # Append DEFAULT_LIMIT
-            clean_sql = f"{clean_sql} LIMIT {DEFAULT_LIMIT}"
+            clean_sql = f"{clean_sql} LIMIT {effective_limit}"
 
         return True, clean_sql
 
