@@ -44,6 +44,10 @@ class AgentOrchestrator:
         else:
             self.client = None
 
+    def is_claude_reachable(self) -> bool:
+        """Returns whether a real Anthropic client is configured."""
+        return self.client is not None and not self.is_mock_key
+
     async def process_message_stream(
         self,
         message: str,
