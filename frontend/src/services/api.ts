@@ -1,0 +1,86 @@
+import { SSEEvent } from '../types';
+
+export interface StreamChatParams {
+  message: string;
+  sessionId: string;
+  showSql?: boolean;
+  onEvent: (event: SSEEvent) => void;
+  onError: (error: Error) => void;
+  signal?: AbortSignal;
+}
+
+export async function streamChat({
+  message,
+  sessionId,
+  showSql = true,
+  onEvent,
+  onError,
+  signal,
+}: StreamChatParams): Promise<void> {
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message,
+        session_id: sessionId,
+        options: {
+          show_sql: showSql,
+          stream: true,
+        },
+      }),
+      signal,
+    });
+
+    if (!response.ok) {
+      const errorJson = await response.json().catch(() => ({}));
+      const errorMsg = errorJson?.detail?.message || `HTTP ${response.status}: ${response.statusText}`;
+      throw new Error(errorMsg);
+    }
+
+    if (!response.body) {
+      throw new Error('Response body is null');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n\n');
+      buffer = lines.pop() || ''; // keep remaining incomplete buffer segment
+
+      for (const block of lines) {
+        const trimmed = block.trim();
+        if (!trimmed) continue;
+
+        const dataLines = trimmed.split('\n');
+        for (const line of dataLines) {
+          if (line.startsWith('data: ')) {
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr) {
+              try {
+                const event: SSEEvent = JSON.parse(jsonStr);
+                onEvent(event);
+              } catch (err) {
+                console.warn('Failed to parse SSE JSON:', jsonStr, err);
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      console.log('Stream request aborted');
+      return;
+    }
+    onError(err instanceof Error ? err : new Error(String(err)));
+  }
+}
