@@ -1,16 +1,16 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 MAX_WINDOW_TURNS = 10
 
 class SessionStore:
     """In-memory session manager with a sliding window of recent conversation turns."""
-    
+
     def __init__(self):
         # Map session_id -> list of message dicts
         self._sessions: Dict[str, List[Dict[str, Any]]] = {}
-        # Cache for database schema
-        self._schema_cache: Optional[Dict[str, Any]] = None
+        # Per-session schema cache (invalidated on session clear)
+        self._schema_cache: Dict[str, Dict[str, Any]] = {}
 
     def get_messages(self, session_id: str) -> List[Dict[str, Any]]:
         """Returns session messages limited to the sliding window limit (10 turns = 20 messages)."""
@@ -35,7 +35,7 @@ class SessionStore:
         record = {
             "role": role,
             "content": content,
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "charts": charts or [],
             "sql_used": sql_used or []
         }
@@ -43,16 +43,20 @@ class SessionStore:
         return record
 
     def clear_session(self, session_id: str) -> bool:
-        """Clears messages for a session."""
+        """Clears messages and schema cache for a session."""
         if session_id in self._sessions:
             del self._sessions[session_id]
+            self.clear_schema_cache(session_id)
             return True
         return False
 
-    def get_schema_cache(self) -> Optional[Dict[str, Any]]:
-        return self._schema_cache
+    def get_schema_cache(self, session_id: str) -> Optional[Dict[str, Any]]:
+        return self._schema_cache.get(session_id)
 
-    def set_schema_cache(self, schema_data: Dict[str, Any]) -> None:
-        self._schema_cache = schema_data
+    def set_schema_cache(self, session_id: str, schema_data: Dict[str, Any]) -> None:
+        self._schema_cache[session_id] = schema_data
+
+    def clear_schema_cache(self, session_id: str) -> None:
+        self._schema_cache.pop(session_id, None)
 
 session_store = SessionStore()

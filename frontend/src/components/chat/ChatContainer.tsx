@@ -36,16 +36,16 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   const showWelcomeChips = messages.length <= 1;
 
   return (
-    <div className="flex flex-col h-full bg-slate-950/40 relative">
+    <div className="flex flex-col h-full bg-[#0f0f13]/40 relative">
       {/* Scrollable Message List */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
         {showWelcomeChips && (
-          <div className="my-6 p-6 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 text-center max-w-xl mx-auto shadow-2xl">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mx-auto mb-3">
+          <div className="my-6 p-6 rounded-2xl bg-gradient-to-b from-[#1a1a24] to-[#0f0f13] border border-[#2a2a3a] text-center max-w-xl mx-auto shadow-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mx-auto mb-3">
               <Sparkles className="w-6 h-6" />
             </div>
-            <h2 className="text-lg font-bold text-slate-100">Welcome to DataFlow AI</h2>
-            <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+            <h2 className="text-lg font-bold text-[#f1f0ff]">Welcome to DataFlow AI</h2>
+            <p className="text-xs text-[#8b8ba7] mt-1 max-w-md mx-auto">
               Ask natural language questions to inspect tables, run validated SQL, and stream interactive charts and Mermaid diagrams.
             </p>
 
@@ -56,9 +56,9 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                   <button
                     key={idx}
                     onClick={() => onSend(prompt.query)}
-                    className="p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-850 text-xs text-slate-300 hover:text-white transition-all flex flex-col justify-between gap-2 group"
+                    className="p-3 rounded-xl bg-[#1a1a24] border border-[#2a2a3a] hover:border-indigo-500/50 hover:bg-[#1a1a24]/80 text-xs text-[#8b8ba7] hover:text-[#f1f0ff] transition-all flex flex-col justify-between gap-2 group"
                   >
-                    <IconComponent className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                    <IconComponent className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" />
                     <span>{prompt.label}</span>
                   </button>
                 );

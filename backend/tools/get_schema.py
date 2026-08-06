@@ -8,8 +8,15 @@ async def get_schema(table_filter: Optional[Any] = None) -> Dict[str, Any]:
     Returns structured table metadata including columns, types, primary keys, foreign keys, and row counts.
     """
     try:
-        if isinstance(table_filter, str):
-            table_filter = [table_filter] if table_filter.strip() else None
+        # Normalize table_filter to a list of strings per the tool contract
+        normalized_filter: Optional[List[str]] = None
+        if table_filter:
+            if isinstance(table_filter, str):
+                normalized_filter = [t.strip() for t in table_filter.split(",") if t.strip()]
+            elif isinstance(table_filter, list):
+                normalized_filter = [str(t).strip() for t in table_filter if str(t).strip()]
+            if not normalized_filter:
+                normalized_filter = None
 
         async with aiosqlite.connect(db_manager.db_path) as conn:
             conn.row_factory = aiosqlite.Row
@@ -29,12 +36,12 @@ async def get_schema(table_filter: Optional[Any] = None) -> Dict[str, Any]:
 
             # Normalize filter if provided
             target_tables = all_tables
-            if table_filter:
-                filter_set = set(t.lower() for t in table_filter)
+            if normalized_filter:
+                filter_set = set(t.lower() for t in normalized_filter)
                 target_tables = [t for t in all_tables if t.lower() in filter_set]
-                
+
                 # Check for invalid requested tables
-                missing = [t for t in table_filter if t.lower() not in set(t.lower() for t in all_tables)]
+                missing = [t for t in normalized_filter if t.lower() not in set(t.lower() for t in all_tables)]
                 if missing:
                     return {
                         "success": False,

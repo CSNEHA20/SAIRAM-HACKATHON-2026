@@ -13,8 +13,8 @@ export const ScatterChartComponent: React.FC<ChartProps> = ({ chart }) => {
   const color = config.color || '#f59e0b';
 
   return (
-    <div className="w-full bg-slate-900/90 border border-slate-800 rounded-xl p-4 my-3">
-      {title && <h4 className="text-xs font-semibold text-slate-200 mb-3 font-mono">{title}</h4>}
+    <div className="w-full bg-[#1a1a24]/90 border border-[#2a2a3a] rounded-xl p-4 my-3">
+      {title && <h4 className="text-xs font-semibold text-[#f1f0ff] mb-3 font-mono">{title}</h4>}
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart margin={{ top: 10, right: 20, left: 0, bottom: 25 }}>

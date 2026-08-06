@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Tests (not needed in production image)
+tests/

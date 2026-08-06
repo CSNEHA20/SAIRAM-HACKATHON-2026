@@ -15,6 +15,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const [showSql, setShowSql] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const bubbleRef = useRef<HTMLDivElement>(null);
+  // Track the first chart container for PNG export
+  const firstChartRef = useRef<HTMLDivElement>(null);
 
   const handleCopySql = (sql: string) => {
     navigator.clipboard.writeText(sql);
@@ -44,10 +46,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       >
         {/* SQL Transparency Badge */}
         {message.sql_used && message.sql_used.length > 0 && (
-          <div className="mb-3 border-b border-slate-800/80 pb-2.5">
+          <div className="mb-3 border-b border-[#2a2a3a]/80 pb-2.5">
             <button
               onClick={() => setShowSql(!showSql)}
-              className="flex items-center justify-between w-full text-xs font-mono text-cyan-400 hover:text-cyan-300 py-1 transition-colors"
+              className="flex items-center justify-between w-full text-xs font-mono text-indigo-400 hover:text-indigo-300 py-1 transition-colors"
             >
               <span className="flex items-center gap-1.5 font-semibold">
                 <Code2 className="w-3.5 h-3.5" />
@@ -59,11 +61,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             {showSql && (
               <div className="mt-2 space-y-2">
                 {message.sql_used.map((sql, idx) => (
-                  <div key={idx} className="relative group rounded-lg bg-slate-950 p-3 border border-slate-800 font-mono text-xs text-emerald-400">
+                  <div key={idx} className="relative group rounded-lg bg-[#0f0f13] p-3 border border-[#2a2a3a] font-mono text-xs text-emerald-400">
                     <pre className="overflow-x-auto whitespace-pre-wrap pr-8">{sql}</pre>
                     <button
                       onClick={() => handleCopySql(sql)}
-                      className="absolute top-2 right-2 p-1.5 rounded-md bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                      className="absolute top-2 right-2 p-1.5 rounded-md bg-[#1a1a24] text-[#8b8ba7] hover:text-[#f1f0ff] hover:bg-[#2a2a3a] transition-colors"
                       title="Copy SQL"
                     >
                       {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -79,7 +81,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         {message.charts && message.charts.length > 0 && (
           <div className="space-y-3">
             {message.charts.map((chart, idx) => (
-              <ChartRenderer key={idx} chart={chart} />
+              <div key={idx} ref={idx === 0 ? firstChartRef : undefined}>
+                <ChartRenderer chart={chart} />
+              </div>
             ))}
           </div>
         )}
@@ -94,10 +98,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         )}
 
         {/* Markdown Content */}
-        <div className="markdown-content font-normal text-slate-200">
+        <div className="markdown-content font-normal text-[#f1f0ff]">
           <ReactMarkdown>{message.content}</ReactMarkdown>
           {message.isStreaming && (
-            <span className="inline-block w-2 h-4 ml-1 bg-cyan-400 animate-pulse rounded-sm align-middle" />
+            <span className="inline-block w-2 h-4 ml-1 bg-indigo-400 animate-pulse rounded-sm align-middle" />
           )}
         </div>
 
@@ -114,11 +118,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
         {/* Export Options */}
         {!isUser && !message.isStreaming && (
-          <ExportButton sqlUsed={message.sql_used} containerRef={bubbleRef} />
+          <ExportButton sqlUsed={message.sql_used} chartContainerRef={firstChartRef} />
         )}
 
         {/* Timestamp */}
-        <div className={`mt-2 text-[10px] text-slate-500 font-mono ${isUser ? 'text-right' : 'text-left'}`}>
+        <div className={`mt-2 text-[10px] text-[#8b8ba7] font-mono ${isUser ? 'text-right' : 'text-left'}`}>
           {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>

@@ -72,14 +72,14 @@ git clone https://github.com/your-team/dataflow-ai.git
 cd sairam-hackathon-2026
 
 # 2. Copy environment file and configure API Key
-cp backend/.env.example backend/.env
-# Add your ANTHROPIC_API_KEY to backend/.env
+cp .env.example .env
+# Add your ANTHROPIC_API_KEY to .env (leave as mock_key_for_dev for offline demo)
 
 # 3. Start full stack with Docker Compose
 docker-compose up --build
 ```
 Access the application at:
-- **Frontend UI:** `http://localhost:80` or `http://localhost:5173`
+- **Frontend UI:** `http://localhost:3000`
 - **Backend API:** `http://localhost:8000/api/health`
 
 ---
@@ -96,8 +96,8 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env
-# Edit .env to supply your ANTHROPIC_API_KEY
+cp ../.env.example ../.env
+# Edit ../.env to supply your ANTHROPIC_API_KEY
 
 uvicorn main:app --reload --port 8000
 ```
@@ -114,9 +114,23 @@ Open `http://localhost:5173` in your browser.
 
 ## 🧪 Running Automated Unit Tests
 
+### Backend tests
 ```bash
 cd backend
 python -m pytest
+```
+
+### Frontend tests
+```bash
+cd frontend
+npm install
+npm run test
+```
+
+### Frontend production build
+```bash
+cd frontend
+npm run build
 ```
 
 ---

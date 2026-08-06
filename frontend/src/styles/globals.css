@@ -3,8 +3,26 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --df-bg: #0f0f13;
+    --df-surface: #1a1a24;
+    --df-border: #2a2a3a;
+    --df-primary: #6366f1;
+    --df-text: #f1f0ff;
+    --df-text-muted: #8b8ba7;
+    --df-success: #22c55e;
+    --df-error: #ef4444;
+    --df-chart-1: #6366f1;
+    --df-chart-2: #8b5cf6;
+    --df-chart-3: #06b6d4;
+    --df-chart-4: #10b981;
+    --df-chart-5: #f59e0b;
+  }
+
   body {
     font-family: 'Inter', sans-serif;
+    background-color: var(--df-bg);
+    color: var(--df-text);
   }
   code, pre {
     font-family: 'JetBrains Mono', monospace;
@@ -13,20 +31,20 @@
 
 /* Custom Glassmorphism & Animations */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(26, 26, 36, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(42, 42, 58, 0.8);
 }
 
 .glass-bubble-user {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
-  border: 1px solid rgba(14, 165, 233, 0.3);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.35);
 }
 
 .glass-bubble-assistant {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(26, 26, 36, 0.85);
+  border: 1px solid rgba(42, 42, 58, 0.9);
 }
 
 @keyframes pulse-subtle {
@@ -47,9 +65,20 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Mermaid diagram containers */
+.svg-container svg {
+  max-width: 100%;
+  height: auto;
+}
+.svg-container .node rect,
+.svg-container .node circle,
+.svg-container .node polygon {
+  stroke-width: 1.5px;
 }

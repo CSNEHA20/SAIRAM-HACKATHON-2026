@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from api.router import router as api_router
 from api.schemas import HealthResponse
 from db.connection import db_manager
+from agent.orchestrator import agent_orchestrator
 
 load_dotenv()
 
@@ -30,14 +31,22 @@ app.add_middleware(
 # Include API Router
 app.include_router(api_router)
 
+
+@app.on_event("startup")
+async def startup_event():
+    """Startup probe: ensure indexes exist and DB is reachable."""
+    await db_manager.initialize()
+
 @app.get("/api/health", response_model=HealthResponse)
 async def health_check():
-    """GET /api/health - Health probe checking DB & API status."""
+    """GET /api/health - Health probe checking DB & Claude API status."""
     is_db_healthy = await db_manager.check_health()
+    claude_reachable = agent_orchestrator.is_claude_reachable()
+    overall_ok = is_db_healthy and claude_reachable
     return HealthResponse(
-        status="ok" if is_db_healthy else "degraded",
+        status="ok" if overall_ok else "degraded",
         database="connected" if is_db_healthy else "disconnected",
-        claude_api="reachable",
+        claude_api="reachable" if claude_reachable else "unreachable",
         version="1.0.0"
     )
 

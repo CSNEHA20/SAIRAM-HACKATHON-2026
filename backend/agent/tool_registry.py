@@ -1,3 +1,5 @@
+import os
+import asyncio
 import json
 from typing import Any, Dict, List, Optional
 from tools.get_schema import get_schema
@@ -5,6 +7,8 @@ from tools.execute_query import execute_query
 from tools.generate_chart import generate_chart
 from tools.generate_flowchart import generate_flowchart
 from tools.explain_data import explain_data
+
+TOOL_TIMEOUT_SECONDS = float(os.getenv("TOOL_TIMEOUT_SECONDS", "30"))
 
 # JSON Schemas for Anthropic Messages API (07_ToolSpecifications.md)
 TOOL_SCHEMAS = [
@@ -15,9 +19,8 @@ TOOL_SCHEMAS = [
             "type": "object",
             "properties": {
                 "table_filter": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional list of table names to inspect. If omitted, all tables are returned."
+                    "type": "string",
+                    "description": "Optional table name to narrow the inspection. If omitted, all tables are returned."
                 }
             },
             "required": []
@@ -143,7 +146,7 @@ TOOL_MAP = {
 async def execute_tool(name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
     """
     Registry entrypoint: dispatches tool name to implementation.
-    Enforces exception safety and returns structured envelope.
+    Enforces exception safety, timeout, and returns structured envelope.
     """
     if name not in TOOL_MAP:
         return {
@@ -153,7 +156,12 @@ async def execute_tool(name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
     tool_func = TOOL_MAP[name]
     try:
-        return await tool_func(**inputs)
+        return await asyncio.wait_for(tool_func(**inputs), timeout=TOOL_TIMEOUT_SECONDS)
+    except asyncio.TimeoutError:
+        return {
+            "success": False,
+            "error": f"Tool {name} timed out after {TOOL_TIMEOUT_SECONDS}s."
+        }
     except Exception as e:
         return {
             "success": False,

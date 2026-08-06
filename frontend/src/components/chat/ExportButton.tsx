@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
-import { Download, FileSpreadsheet, Image as ImageIcon } from 'lucide-react';
+import { FileSpreadsheet, Image as ImageIcon } from 'lucide-react';
 
 interface ExportButtonProps {
   sqlUsed?: string[];
-  containerRef?: React.RefObject<HTMLDivElement>;
+  chartContainerRef?: React.RefObject<HTMLDivElement>;
 }
 
-export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, containerRef }) => {
+export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, chartContainerRef }) => {
   const [isExporting, setIsExporting] = useState<boolean>(false);
 
   const handleExportPng = async () => {
-    if (!containerRef?.current) return;
+    // Prefer the dedicated chart container; otherwise fall back to no-op
+    const target = chartContainerRef?.current;
+    if (!target) return;
     try {
       setIsExporting(true);
-      const canvas = await html2canvas(containerRef.current, {
-        backgroundColor: '#0f172a',
+      const canvas = await html2canvas(target, {
+        backgroundColor: '#1a1a24',
         scale: 2,
       });
       const image = canvas.toDataURL('image/png');
@@ -56,15 +58,15 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, containerRe
   };
 
   return (
-    <div className="flex items-center gap-2 mt-3 pt-2 border-t border-slate-800/60">
-      {containerRef && (
+    <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[#2a2a3a]/60">
+      {chartContainerRef && (
         <button
           onClick={handleExportPng}
           disabled={isExporting}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1a1a24] border border-[#2a2a3a] text-xs text-[#8b8ba7] hover:text-[#f1f0ff] hover:bg-[#2a2a3a] transition-colors"
           title="Export visualization as PNG"
         >
-          <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
+          <ImageIcon className="w-3.5 h-3.5 text-indigo-400" />
           <span>Export PNG</span>
         </button>
       )}
@@ -73,7 +75,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, containerRe
         <button
           onClick={handleExportCsv}
           disabled={isExporting}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1a1a24] border border-[#2a2a3a] text-xs text-[#8b8ba7] hover:text-[#f1f0ff] hover:bg-[#2a2a3a] transition-colors"
           title="Download query dataset as CSV"
         >
           <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
