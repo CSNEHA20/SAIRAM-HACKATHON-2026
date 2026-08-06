@@ -1,5 +1,4 @@
 import React from 'react';
-import { Terminal, Loader2 } from 'lucide-react';
 
 interface TypingIndicatorProps {
   activeTool?: string | null;
@@ -7,19 +6,19 @@ interface TypingIndicatorProps {
 
 export const TypingIndicator: React.FC<TypingIndicatorProps> = ({ activeTool }) => {
   return (
-    <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl glass-bubble-assistant max-w-fit animate-pulse-subtle">
-      <div className="flex items-center gap-1.5 text-indigo-400">
+    <div className="flex items-center gap-3 px-4 py-2.5 rounded bg-surface-container border border-surface-container-high border-l-2 border-l-secondary text-on-surface shadow-sm max-w-fit animate-pulse-subtle">
+      <div className="flex items-center gap-1.5 text-primary">
         {activeTool ? (
-          <Terminal className="w-4 h-4 animate-bounce" />
+          <span className="material-symbols-outlined text-sm animate-bounce">terminal</span>
         ) : (
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="material-symbols-outlined text-sm animate-spin">sync</span>
         )}
       </div>
-      <div className="text-xs font-mono text-[#8b8ba7] flex items-center gap-2">
+      <div className="text-label-md font-label-md text-on-surface-variant flex items-center gap-2">
         {activeTool ? (
           <>
             <span>Executing tool:</span>
-            <span className="px-2 py-0.5 rounded bg-indigo-950/80 border border-indigo-800 text-indigo-300 font-semibold">
+            <span className="px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant text-secondary font-bold">
               {activeTool}
             </span>
           </>

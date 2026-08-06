@@ -14,9 +14,9 @@ interface ChatContainerProps {
 }
 
 const EXAMPLE_PROMPTS = [
-  { label: 'Show top 5 products by price', icon: BarChart2, query: 'Show me top 5 products by price as a bar chart' },
-  { label: 'Draw database ER diagram', icon: GitFork, query: 'Generate an ER diagram for the database tables' },
-  { label: 'Summarize customer orders', icon: ShoppingBag, query: 'Show summary of customer orders with total revenue' },
+  { label: 'Show top 5 products by price', icon: 'bar_chart', query: 'Show me top 5 products by price as a bar chart' },
+  { label: 'Draw database ER diagram', icon: 'account_tree', query: 'Generate an ER diagram for the database tables' },
+  { label: 'Summarize customer orders', icon: 'shopping_bag', query: 'Show summary of customer orders with total revenue' },
 ];
 
 export const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -36,33 +36,30 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   const showWelcomeChips = messages.length <= 1;
 
   return (
-    <div className="flex flex-col h-full bg-[#0f0f13]/40 relative">
+    <div className="flex flex-col h-full bg-background relative flex-1">
       {/* Scrollable Message List */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 custom-scrollbar">
         {showWelcomeChips && (
-          <div className="my-6 p-6 rounded-2xl bg-gradient-to-b from-[#1a1a24] to-[#0f0f13] border border-[#2a2a3a] text-center max-w-xl mx-auto shadow-2xl">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mx-auto mb-3">
-              <Sparkles className="w-6 h-6" />
+          <div className="my-6 p-6 rounded bg-surface-container border border-outline-variant text-center max-w-xl mx-auto shadow-sm">
+            <div className="w-12 h-12 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary mx-auto mb-3">
+              <span className="material-symbols-outlined text-2xl">auto_awesome</span>
             </div>
-            <h2 className="text-lg font-bold text-[#f1f0ff]">Welcome to DataFlow AI</h2>
-            <p className="text-xs text-[#8b8ba7] mt-1 max-w-md mx-auto">
-              Ask natural language questions to inspect tables, run validated SQL, and stream interactive charts and Mermaid diagrams.
+            <h2 className="text-headline-md font-bold text-on-surface">Welcome to QueryMind AI</h2>
+            <p className="text-body-sm text-on-surface-variant mt-1 max-w-md mx-auto">
+              Ask natural language questions to inspect tables, run validated SQL, and stream interactive charts and diagrams.
             </p>
 
             <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2 text-left">
-              {EXAMPLE_PROMPTS.map((prompt, idx) => {
-                const IconComponent = prompt.icon;
-                return (
+              {EXAMPLE_PROMPTS.map((prompt, idx) => (
                   <button
                     key={idx}
                     onClick={() => onSend(prompt.query)}
-                    className="p-3 rounded-xl bg-[#1a1a24] border border-[#2a2a3a] hover:border-indigo-500/50 hover:bg-[#1a1a24]/80 text-xs text-[#8b8ba7] hover:text-[#f1f0ff] transition-all flex flex-col justify-between gap-2 group"
+                    className="p-3 rounded bg-surface-container-low border border-outline-variant hover:border-primary hover:bg-surface-container-highest text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all flex flex-col justify-between gap-2 group"
                   >
-                    <IconComponent className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" />
+                    <span className="material-symbols-outlined text-primary">{prompt.icon}</span>
                     <span>{prompt.label}</span>
                   </button>
-                );
-              })}
+              ))}
             </div>
           </div>
         )}

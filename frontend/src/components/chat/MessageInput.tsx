@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Square, Sparkles } from 'lucide-react';
 
 interface MessageInputProps {
   onSend: (message: string) => void;
@@ -53,7 +52,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const isBusy = status === 'streaming' || status === 'connecting';
 
   return (
-    <div className="p-4 border-t border-[#2a2a3a] bg-[#0f0f13]/90 backdrop-blur-md">
+    <div className="p-4 border-t border-outline-variant bg-surface-container/90 backdrop-blur-md">
       {/* Quick Prompt Chips */}
       <div className="flex flex-wrap gap-2 mb-3">
         {QUICK_PROMPTS.map((prompt, idx) => (
@@ -61,9 +60,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             key={idx}
             disabled={disabled}
             onClick={() => onSend(prompt)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[#1a1a24] border border-[#2a2a3a] text-[#8b8ba7] hover:text-[#f1f0ff] hover:border-indigo-500/40 hover:bg-indigo-500/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-label-md font-label-md bg-surface-container-low border border-outline-variant text-on-surface-variant hover:text-on-surface hover:border-primary/40 hover:bg-primary/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Sparkles className="w-3 h-3 text-indigo-400" />
+            <span className="material-symbols-outlined text-sm text-primary">auto_awesome</span>
             <span>{prompt}</span>
           </button>
         ))}
@@ -79,26 +78,26 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           disabled={disabled}
           rows={1}
           placeholder={disabled ? 'DataFlow AI is generating stream...' : 'Ask a database question (e.g. "Show revenue trends")...'}
-          className="flex-1 min-h-[48px] max-h-[120px] bg-[#1a1a24] border border-[#2a2a3a] rounded-xl px-4 py-3 text-sm text-[#f1f0ff] placeholder-[#8b8ba7] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-60 disabled:cursor-not-allowed resize-none overflow-y-auto"
+          className="flex-1 min-h-[48px] max-h-[120px] bg-surface-container-low border border-outline-variant rounded px-4 py-3 text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all disabled:opacity-60 disabled:cursor-not-allowed resize-none custom-scrollbar"
         />
 
         {isBusy ? (
           <button
             type="button"
             onClick={onStop}
-            className="px-4 py-3 rounded-xl bg-red-600/80 hover:bg-red-600 text-white font-medium text-sm flex items-center gap-2 transition-colors shadow-lg shadow-red-600/20"
+            className="px-4 py-3 rounded bg-error/80 hover:bg-error text-on-error font-medium text-body-sm flex items-center gap-2 transition-colors shadow-sm"
             title="Stop generation"
           >
-            <Square className="w-4 h-4 fill-current" />
+            <span className="material-symbols-outlined text-sm font-bold">stop</span>
             <span className="hidden sm:inline">Stop</span>
           </button>
         ) : (
           <button
             type="submit"
             disabled={!text.trim() || disabled}
-            className="px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-medium text-sm flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-3 rounded bg-primary hover:bg-primary-fixed text-on-primary font-bold font-label-md tracking-wider uppercase text-label-md flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Send className="w-4 h-4" />
+            <span className="material-symbols-outlined text-sm font-bold">send</span>
             <span className="hidden sm:inline">Send</span>
           </button>
         )}

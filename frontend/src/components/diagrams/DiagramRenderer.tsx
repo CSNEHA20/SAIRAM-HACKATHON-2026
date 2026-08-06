@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { SSEDiagramEvent } from '../../types';
-import { Network } from 'lucide-react';
 
 interface DiagramRendererProps {
   diagram: SSEDiagramEvent;
@@ -45,18 +44,18 @@ export const DiagramRenderer: React.FC<DiagramRendererProps> = ({ diagram }) => 
   }, [diagram.mermaid]);
 
   return (
-    <div className="w-full bg-[#1a1a24]/90 border border-[#2a2a3a] rounded-xl p-4 my-3 overflow-x-auto">
+    <div className="w-full bg-surface-container-lowest border border-outline-variant rounded p-4 my-3 overflow-x-auto shadow-sm">
       {diagram.title && (
-        <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-[#f1f0ff] font-mono">
-          <Network className="w-4 h-4 text-indigo-400" />
+        <div className="flex items-center gap-2 mb-3 text-label-md font-label-md text-on-surface uppercase tracking-wider">
+          <span className="material-symbols-outlined text-sm text-primary">account_tree</span>
           <span>{diagram.title}</span>
         </div>
       )}
 
       {error ? (
-        <div className="bg-[#0f0f13] p-3 rounded-lg border border-red-900/50 text-red-400 font-mono text-xs overflow-x-auto">
-          <p className="font-semibold mb-1">Diagram Syntax Rendering Error:</p>
-          <pre className="text-[11px] text-[#8b8ba7]">{diagram.mermaid}</pre>
+        <div className="bg-surface p-3 rounded border border-error/50 text-error font-label-md text-label-sm overflow-x-auto">
+          <p className="font-bold mb-1">Diagram Syntax Rendering Error:</p>
+          <pre className="text-on-surface-variant font-label-caps">{diagram.mermaid}</pre>
         </div>
       ) : (
         <div

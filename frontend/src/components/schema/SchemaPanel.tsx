@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Database, Table2, Key, RefreshCw, Layers } from 'lucide-react';
 import { SchemaTable, SchemaColumn, SchemaForeignKey } from '../../types';
 
 export const SchemaPanel: React.FC = () => {
@@ -26,25 +25,25 @@ export const SchemaPanel: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-full gap-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#8b8ba7] uppercase tracking-wider font-mono">
-          <Layers className="w-4 h-4 text-indigo-400" />
+    <div className="flex flex-col h-full bg-surface-container-lowest">
+      <div className="flex items-center justify-between p-3 border-b border-outline-variant bg-surface-container-low">
+        <div className="flex items-center gap-2 text-label-md font-label-md text-primary uppercase tracking-wider">
+          <span className="material-symbols-outlined text-sm">schema</span>
           <span>Schema Preview</span>
         </div>
         <button
           onClick={fetchSchema}
           disabled={loading}
-          className="p-1 rounded bg-[#1a1a24] border border-[#2a2a3a] text-[#8b8ba7] hover:text-[#f1f0ff] transition-colors"
+          className="p-1 rounded bg-surface-container border border-outline-variant text-on-surface-variant hover:text-primary transition-colors"
           title="Refresh schema"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <span className={`material-symbols-outlined text-sm ${loading ? 'animate-spin' : ''}`}>sync</span>
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto pr-1 space-y-2">
+      <div className="flex-1 overflow-y-auto p-2 space-y-2 custom-scrollbar">
         {tables.length === 0 ? (
-          <p className="text-xs text-[#8b8ba7] font-mono italic">
+          <p className="text-label-sm text-on-surface-variant font-label-sm italic p-2 text-center">
             {loading ? 'Loading schema...' : 'No tables available'}
           </p>
         ) : (
@@ -53,40 +52,40 @@ export const SchemaPanel: React.FC = () => {
             return (
               <div
                 key={table.name}
-                className="rounded-xl bg-[#1a1a24]/90 border border-[#2a2a3a]/80 overflow-hidden transition-colors"
+                className="rounded bg-surface-container border border-outline-variant overflow-hidden transition-colors"
               >
                 <div
                   onClick={() => setExpandedTable(isExpanded ? null : table.name)}
-                  className="p-2.5 flex items-center justify-between cursor-pointer hover:bg-[#2a2a3a]/30 transition-colors"
+                  className="p-2.5 flex items-center justify-between cursor-pointer hover:bg-surface-container-high transition-colors"
                 >
                   <div className="flex items-center gap-2">
-                    <Table2 className="w-4 h-4 text-indigo-400 shrink-0" />
-                    <span className="font-mono text-xs font-semibold text-[#f1f0ff]">{table.name}</span>
+                    <span className="material-symbols-outlined text-sm text-secondary shrink-0">table</span>
+                    <span className="font-label-md text-label-md text-on-surface">{table.name}</span>
                   </div>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#0f0f13] text-[#8b8ba7] font-mono">
-                    {table.row_count} rows
+                  <span className="text-label-caps px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-caps tracking-widest">
+                    {table.row_count} ROWS
                   </span>
                 </div>
 
                 {isExpanded && (
-                  <div className="p-2.5 pt-0 border-t border-[#2a2a3a]/60 bg-[#0f0f13]/50 text-[11px] font-mono space-y-1.5">
-                    <div className="text-[10px] text-[#8b8ba7] font-semibold uppercase mt-1">Columns:</div>
+                  <div className="p-2.5 pt-0 border-t border-outline-variant bg-surface-container-lowest text-label-sm font-label-md space-y-2">
+                    <div className="text-label-caps text-on-surface-variant uppercase tracking-widest mt-2">Columns</div>
                     <div className="space-y-1 pl-1">
                       {table.columns.map((col: SchemaColumn) => (
-                        <div key={col.name} className="flex items-center justify-between text-[#f1f0ff]">
+                        <div key={col.name} className="flex items-center justify-between text-on-surface">
                           <span className="flex items-center gap-1">
-                            {col.pk && <Key className="w-3 h-3 text-amber-400 shrink-0" />}
+                            {col.pk && <span className="material-symbols-outlined text-xs text-primary shrink-0">key</span>}
                             <span>{col.name}</span>
                           </span>
-                          <span className="text-[#8b8ba7] text-[10px]">{col.type}</span>
+                          <span className="text-on-surface-variant text-label-sm">{col.type}</span>
                         </div>
                       ))}
                     </div>
 
                     {table.foreign_keys && table.foreign_keys.length > 0 && (
                       <>
-                        <div className="text-[10px] text-[#8b8ba7] font-semibold uppercase pt-1">Relationships:</div>
-                        <div className="space-y-1 pl-1 text-[10px] text-indigo-400/90">
+                        <div className="text-label-caps text-on-surface-variant uppercase tracking-widest pt-2">Relationships</div>
+                        <div className="space-y-1 pl-1 text-label-sm text-secondary">
                           {table.foreign_keys.map((fk: SchemaForeignKey, idx: number) => (
                             <div key={idx} className="truncate">
                               {fk.from_column || fk.from} → {fk.target_table || fk.table}({fk.target_column || fk.to})

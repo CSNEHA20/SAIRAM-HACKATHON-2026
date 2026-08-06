@@ -1,6 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
-import { FileSpreadsheet, Image as ImageIcon } from 'lucide-react';
 
 interface ExportButtonProps {
   sqlUsed?: string[];
@@ -17,13 +16,13 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, chartContai
     try {
       setIsExporting(true);
       const canvas = await html2canvas(target, {
-        backgroundColor: '#1a1a24',
+        backgroundColor: '#131313',
         scale: 2,
       });
       const image = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = image;
-      link.download = `dataflow-chart-${Date.now()}.png`;
+      link.download = `querymind-chart-${Date.now()}.png`;
       link.click();
     } catch (err) {
       console.error('Failed to export PNG:', err);
@@ -40,14 +39,14 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, chartContai
       const res = await fetch('/api/export/csv', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sql: lastSql, filename: 'dataflow_export' }),
+        body: JSON.stringify({ sql: lastSql, filename: 'querymind_export' }),
       });
       if (!res.ok) throw new Error('CSV Export failed');
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `dataflow-export-${Date.now()}.csv`;
+      a.download = `querymind-export-${Date.now()}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (err) {
@@ -58,15 +57,15 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, chartContai
   };
 
   return (
-    <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[#2a2a3a]/60">
+    <div className="flex items-center gap-2">
       {chartContainerRef && (
         <button
           onClick={handleExportPng}
           disabled={isExporting}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1a1a24] border border-[#2a2a3a] text-xs text-[#8b8ba7] hover:text-[#f1f0ff] hover:bg-[#2a2a3a] transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors"
           title="Export visualization as PNG"
         >
-          <ImageIcon className="w-3.5 h-3.5 text-indigo-400" />
+          <span className="material-symbols-outlined text-sm text-secondary">image</span>
           <span>Export PNG</span>
         </button>
       )}
@@ -75,10 +74,10 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, chartContai
         <button
           onClick={handleExportCsv}
           disabled={isExporting}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1a1a24] border border-[#2a2a3a] text-xs text-[#8b8ba7] hover:text-[#f1f0ff] hover:bg-[#2a2a3a] transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-high border border-outline-variant text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors"
           title="Download query dataset as CSV"
         >
-          <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="material-symbols-outlined text-sm text-secondary">csv</span>
           <span>Export CSV</span>
         </button>
       )}

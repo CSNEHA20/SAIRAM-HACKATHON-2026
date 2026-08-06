@@ -28,47 +28,53 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
     <div className={`flex gap-3 my-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
       {/* Avatar */}
       <div
-        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+        className={`w-9 h-9 rounded flex items-center justify-center shrink-0 ${
           isUser
-            ? 'bg-gradient-to-br from-indigo-500 to-cyan-500 text-white shadow-lg shadow-indigo-500/20'
-            : 'bg-slate-800 border border-slate-700 text-cyan-400'
+            ? 'bg-surface-container-high border border-outline-variant text-on-surface'
+            : 'bg-primary-container text-on-primary-container'
         }`}
       >
-        {isUser ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
+        {isUser ? (
+          <span className="material-symbols-outlined text-sm">person</span>
+        ) : (
+          <span className="material-symbols-outlined text-sm">smart_toy</span>
+        )}
       </div>
 
       {/* Bubble Container */}
       <div
         ref={bubbleRef}
-        className={`max-w-[90%] md:max-w-[80%] rounded-2xl p-4 text-sm leading-relaxed ${
-          isUser ? 'glass-bubble-user text-slate-100' : 'glass-bubble-assistant text-slate-200'
+        className={`max-w-[90%] md:max-w-[80%] rounded p-4 text-body-md leading-relaxed ${
+          isUser 
+            ? 'bg-transparent border border-outline-variant text-on-surface-variant' 
+            : 'bg-surface-container border border-surface-container-high border-l-2 border-l-secondary text-on-surface shadow-sm'
         }`}
       >
         {/* SQL Transparency Badge */}
         {message.sql_used && message.sql_used.length > 0 && (
-          <div className="mb-3 border-b border-[#2a2a3a]/80 pb-2.5">
+          <div className="mb-3 border-b border-outline-variant pb-2.5">
             <button
               onClick={() => setShowSql(!showSql)}
-              className="flex items-center justify-between w-full text-xs font-mono text-indigo-400 hover:text-indigo-300 py-1 transition-colors"
+              className="flex items-center justify-between w-full text-label-md font-label-md text-primary hover:text-primary-fixed transition-colors"
             >
-              <span className="flex items-center gap-1.5 font-semibold">
-                <Code2 className="w-3.5 h-3.5" />
+              <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider">
+                <span className="material-symbols-outlined text-sm">database</span>
                 <span>SQL Executed ({message.sql_used.length})</span>
               </span>
-              {showSql ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              <span className="material-symbols-outlined text-sm">{showSql ? 'expand_less' : 'expand_more'}</span>
             </button>
 
             {showSql && (
               <div className="mt-2 space-y-2">
                 {message.sql_used.map((sql, idx) => (
-                  <div key={idx} className="relative group rounded-lg bg-[#0f0f13] p-3 border border-[#2a2a3a] font-mono text-xs text-emerald-400">
+                  <div key={idx} className="relative group rounded bg-surface-container-lowest p-3 border border-outline-variant font-label-md text-secondary">
                     <pre className="overflow-x-auto whitespace-pre-wrap pr-8">{sql}</pre>
                     <button
                       onClick={() => handleCopySql(sql)}
-                      className="absolute top-2 right-2 p-1.5 rounded-md bg-[#1a1a24] text-[#8b8ba7] hover:text-[#f1f0ff] hover:bg-[#2a2a3a] transition-colors"
+                      className="absolute top-2 right-2 p-1.5 rounded bg-surface-container-high text-on-surface-variant hover:text-primary hover:bg-surface-container-highest transition-colors"
                       title="Copy SQL"
                     >
-                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copied ? <span className="material-symbols-outlined text-sm text-secondary">check</span> : <span className="material-symbols-outlined text-sm">content_copy</span>}
                     </button>
                   </div>
                 ))}
@@ -79,9 +85,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
         {/* Charts */}
         {message.charts && message.charts.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-3 mt-3">
             {message.charts.map((chart, idx) => (
-              <div key={idx} ref={idx === 0 ? firstChartRef : undefined}>
+              <div key={idx} ref={idx === 0 ? firstChartRef : undefined} className="bg-surface-container-lowest p-2 rounded border border-outline-variant">
                 <ChartRenderer chart={chart} />
               </div>
             ))}
@@ -90,7 +96,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
         {/* Diagrams */}
         {message.diagrams && message.diagrams.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-3 mt-3">
             {message.diagrams.map((diag, idx) => (
               <DiagramRenderer key={idx} diagram={diag} />
             ))}
@@ -98,19 +104,19 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         )}
 
         {/* Markdown Content */}
-        <div className="markdown-content font-normal text-[#f1f0ff]">
+        <div className="markdown-content font-normal mt-2">
           <ReactMarkdown>{message.content}</ReactMarkdown>
           {message.isStreaming && (
-            <span className="inline-block w-2 h-4 ml-1 bg-indigo-400 animate-pulse rounded-sm align-middle" />
+            <span className="inline-block w-2 h-4 ml-1 bg-primary animate-pulse rounded-sm align-middle" />
           )}
         </div>
 
         {/* Error Callout */}
         {message.error && (
-          <div className="mt-3 p-3 rounded-xl bg-red-950/60 border border-red-800/80 text-red-300 text-xs flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+          <div className="mt-3 p-3 rounded bg-error-container/20 border border-error-container text-error text-body-sm flex items-start gap-2">
+            <span className="material-symbols-outlined text-sm shrink-0 mt-0.5">error</span>
             <div>
-              <p className="font-semibold">Execution Error</p>
+              <p className="font-bold font-label-md tracking-wider uppercase">Execution Error</p>
               <p className="mt-0.5 opacity-90">{message.error}</p>
             </div>
           </div>
@@ -118,13 +124,19 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
         {/* Export Options */}
         {!isUser && !message.isStreaming && (
-          <ExportButton sqlUsed={message.sql_used} chartContainerRef={firstChartRef} />
+          <div className="mt-3 pt-3 border-t border-outline-variant flex justify-between items-center">
+             <div className={`text-label-sm text-on-surface-variant font-label-sm ${isUser ? 'text-right' : 'text-left'}`}>
+               {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+             </div>
+             <ExportButton sqlUsed={message.sql_used} chartContainerRef={firstChartRef} />
+          </div>
         )}
-
-        {/* Timestamp */}
-        <div className={`mt-2 text-[10px] text-[#8b8ba7] font-mono ${isUser ? 'text-right' : 'text-left'}`}>
-          {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </div>
+        
+        {isUser && (
+           <div className={`mt-2 text-label-sm text-on-surface-variant font-label-sm text-right`}>
+             {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+           </div>
+        )}
       </div>
     </div>
   );
