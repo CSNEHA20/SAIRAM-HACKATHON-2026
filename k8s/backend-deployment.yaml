@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataflow-backend
+  namespace: dataflow
+  labels:
+    app: dataflow-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataflow-backend
+  template:
+    metadata:
+      labels:
+        app: dataflow-backend
+    spec:
+      containers:
+        - name: backend
+          image: dataflow-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: dataflow-config
+            - secretRef:
+                name: dataflow-secrets
+          volumeMounts:
+            - name: database
+              mountPath: /app/database
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: database
+          persistentVolumeClaim:
+            claimName: dataflow-database-pvc

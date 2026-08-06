@@ -1,6 +1,6 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { IMessage, ChatState, SSEEvent } from '../types';
-import { streamChat } from '../services/api';
+import { authenticatedFetch, streamChat } from '../services/api';
 
 export function useChat(initialSessionId: string = 'default-session') {
   const [state, setState] = useState<ChatState>({
@@ -18,6 +18,39 @@ export function useChat(initialSessionId: string = 'default-session') {
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Restore server-side session history on mount (persistent sessions feature).
+  useEffect(() => {
+    let cancelled = false;
+    authenticatedFetch(`/api/session/${initialSessionId}/history`)
+      .then(async (res) => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then((data) => {
+        if (cancelled || !data?.messages || data.messages.length === 0) return;
+        const restored: IMessage[] = data.messages.map((msg: any, idx: number) => ({
+          id: `restored_${idx}`,
+          role: msg.role,
+          content: msg.content,
+          timestamp: msg.timestamp,
+          sql_used: msg.sql_used || [],
+          charts: msg.charts || [],
+          diagrams: [],
+          isStreaming: false,
+        }));
+        setState((prev) => ({
+          ...prev,
+          messages: [...prev.messages.slice(0, 1), ...restored],
+        }));
+      })
+      .catch(() => {
+        // Ignore restore errors; keep the welcome message.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [initialSessionId]);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim() || state.status === 'streaming' || state.status === 'connecting') {

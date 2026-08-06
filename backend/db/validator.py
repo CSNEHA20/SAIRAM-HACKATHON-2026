@@ -9,13 +9,19 @@ FORBIDDEN_KEYWORDS = {
 DEFAULT_LIMIT = 100
 MAX_LIMIT = 1000
 
+
 class SQLValidator:
     """SELECT-only query validator and LIMIT policy enforcer."""
-    
+
     @staticmethod
-    def validate_and_format(sql: str, limit: int = DEFAULT_LIMIT) -> Tuple[bool, str]:
+    def validate_and_format(
+        sql: str,
+        limit: int = DEFAULT_LIMIT,
+        dialect: str = "sqlite"
+    ) -> Tuple[bool, str]:
         """
         Validates that the SQL is a safe SELECT statement and enforces LIMIT policies.
+        Accepts dialect hints (sqlite, postgresql, mysql) but LIMIT syntax is ANSI-compatible.
         Returns:
             (True, formatted_sql) if valid.
             (False, error_message) if invalid.
@@ -24,7 +30,7 @@ class SQLValidator:
             return False, "SQL query cannot be empty."
 
         clean_sql = sql.strip().rstrip(";")
-        
+
         # Rule 1: Must start with SELECT (case-insensitive)
         if not re.match(r"^\s*(WITH|SELECT)\b", clean_sql, re.IGNORECASE):
             return False, "Only SELECT queries are allowed for data safety."
@@ -53,5 +59,6 @@ class SQLValidator:
             clean_sql = f"{clean_sql} LIMIT {effective_limit}"
 
         return True, clean_sql
+
 
 sql_validator = SQLValidator()

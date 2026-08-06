@@ -1,13 +1,24 @@
 import React from 'react';
 
+import { HistoryItem } from '../../hooks/useQueryHistory';
+
 interface SideNavBarProps {
-  history: any[];
+  history: HistoryItem[];
+  favorites: HistoryItem[];
   onSelectQuery: (q: string) => void;
   onRemoveQuery: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
   onClearHistory: () => void;
 }
 
-export const SideNavBar: React.FC<SideNavBarProps> = ({ history, onSelectQuery, onRemoveQuery, onClearHistory }) => {
+export const SideNavBar: React.FC<SideNavBarProps> = ({
+  history,
+  favorites,
+  onSelectQuery,
+  onRemoveQuery,
+  onToggleFavorite,
+  onClearHistory,
+}) => {
   return (
     <nav className="hidden md:flex flex-col bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant w-64 h-full flex-shrink-0">
       <div className="p-md border-b border-surface-container-high mb-4">
@@ -32,6 +43,36 @@ export const SideNavBar: React.FC<SideNavBarProps> = ({ history, onSelectQuery, 
         </button>
       </div>
       
+      {favorites.length > 0 && (
+        <>
+          <div className="px-md mb-2 flex justify-between items-center">
+            <div className="font-label-sm text-primary uppercase tracking-widest">Favorites</div>
+          </div>
+          <div className="px-md mb-4 space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
+            {favorites.map((item) => (
+              <div
+                key={`fav-${item.id}`}
+                className="group flex items-center gap-2 p-2 rounded bg-surface-container-high cursor-pointer transition-colors border border-outline-variant hover:border-primary"
+                onClick={() => onSelectQuery(item.query)}
+              >
+                <span className="material-symbols-outlined text-primary text-sm">star</span>
+                <span className="flex-1 truncate text-on-surface font-label-sm">{item.query}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite(item.id);
+                  }}
+                  className="opacity-0 group-hover:opacity-100 p-1 text-on-surface-variant hover:text-error transition-all"
+                  title="Remove from favorites"
+                >
+                  <span className="material-symbols-outlined text-sm">star</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       <div className="px-md mb-2 flex justify-between items-center">
         <div className="font-label-sm text-on-surface-variant uppercase tracking-widest">Query History</div>
         {history.length > 0 && (
@@ -60,6 +101,16 @@ export const SideNavBar: React.FC<SideNavBarProps> = ({ history, onSelectQuery, 
             >
               <span className="material-symbols-outlined text-on-surface-variant text-sm">terminal</span>
               <span className="flex-1 truncate text-on-surface font-label-sm">{item.query}</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(item.id);
+                }}
+                className={`p-1 transition-all ${item.isFavorite ? 'text-primary opacity-100' : 'opacity-0 group-hover:opacity-100 text-on-surface-variant hover:text-primary'}`}
+                title={item.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                <span className="material-symbols-outlined text-sm">{item.isFavorite ? 'star' : 'star_border'}</span>
+              </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();

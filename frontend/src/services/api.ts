@@ -1,5 +1,7 @@
 import { SSEEvent } from '../types';
 
+const AUTH_TOKEN_KEY = 'dataflow_auth_token';
+
 export interface StreamChatParams {
   message: string;
   sessionId: string;
@@ -7,6 +9,99 @@ export interface StreamChatParams {
   onEvent: (event: SSEEvent) => void;
   onError: (error: Error) => void;
   signal?: AbortSignal;
+}
+
+export interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
+/**
+ * Return the stored auth token, if any.
+ */
+export function getAuthToken(): string | null {
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Store an auth token in localStorage.
+ */
+export function setAuthToken(token: string | null): void {
+  try {
+    if (token) {
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+/**
+ * Build headers for authenticated API requests.
+ */
+function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+/**
+ * Wrapper around fetch that injects the stored auth token.
+ */
+export async function authenticatedFetch(
+  input: RequestInfo,
+  init: RequestInit = {}
+): Promise<Response> {
+  const headers = new Headers(init.headers || {});
+  const authHeaders = getAuthHeaders();
+  Object.entries(authHeaders).forEach(([key, value]) => {
+    if (!headers.has(key)) {
+      headers.set(key, value);
+    }
+  });
+  return fetch(input, { ...init, headers });
+}
+
+/**
+ * Exchange username/password for an access token.
+ */
+export async function login(credentials: LoginCredentials): Promise<LoginResponse> {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  });
+  if (!response.ok) {
+    const errorJson = await response.json().catch(() => ({}));
+    throw new Error(errorJson?.detail?.message || `Login failed: ${response.status}`);
+  }
+  const data: LoginResponse = await response.json();
+  setAuthToken(data.access_token);
+  return data;
+}
+
+/**
+ * Clear the stored auth token.
+ */
+export function logout(): void {
+  setAuthToken(null);
 }
 
 export async function streamChat({
@@ -20,9 +115,7 @@ export async function streamChat({
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify({
         message,
         session_id: sessionId,

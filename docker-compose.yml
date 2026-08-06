@@ -1,6 +1,18 @@
 version: '3.9'
 
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
   backend:
     build:
       context: ./backend
@@ -11,9 +23,14 @@ services:
       - .env
     environment:
       - DATABASE_PATH=/app/database/ecommerce.sqlite
+      - SESSION_DB_PATH=/app/database/sessions.sqlite
+      - REDIS_URL=redis://redis:6379/0
       - CORS_ORIGIN=http://localhost:3000,http://localhost:5173
     volumes:
       - ./database:/app/database
+    depends_on:
+      redis:
+        condition: service_started
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
       interval: 10s
@@ -32,3 +49,6 @@ services:
         condition: service_healthy
     env_file:
       - .env
+
+volumes:
+  redis_data:

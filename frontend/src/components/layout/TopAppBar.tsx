@@ -2,9 +2,10 @@ import React from 'react';
 
 interface TopAppBarProps {
   health?: { status: string; database: string } | null;
+  rightActions?: React.ReactNode;
 }
 
-export const TopAppBar: React.FC<TopAppBarProps> = ({ health }) => {
+export const TopAppBar: React.FC<TopAppBarProps> = ({ health, rightActions }) => {
   return (
     <header className="bg-surface dark:bg-surface border-b border-outline-variant w-full top-0 z-50 shrink-0">
       <div className="flex justify-between items-center w-full px-margin-desktop py-md max-w-container-max mx-auto h-16">
@@ -33,9 +34,7 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({ health }) => {
               </span>
             </div>
 
-            <button className="text-primary hover:bg-surface-container-high transition-colors p-2 rounded cursor-pointer active:opacity-80">
-              <span className="material-symbols-outlined" data-icon="security">security</span>
-            </button>
+            {rightActions}
             <button className="text-primary hover:bg-surface-container-high transition-colors p-2 rounded cursor-pointer active:opacity-80">
               <span className="material-symbols-outlined" data-icon="bolt">bolt</span>
             </button>

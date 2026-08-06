@@ -2,15 +2,49 @@ import asyncio
 import json
 import uuid
 from typing import AsyncGenerator
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 
 from agent.session import session_store
-from api.schemas import ChatRequest, HistoryResponse, MessageRecord, SchemaResponse
+from api.auth import require_auth, get_current_user, _verify_basic_auth, _load_auth_config, create_access_token
+from api.rate_limit import check_rate_limit
+from api.schemas import (
+    ChatRequest,
+    HistoryResponse,
+    MessageRecord,
+    SchemaResponse,
+    LoginRequest,
+    TokenResponse,
+    UserResponse,
+)
 from tools.get_schema import get_schema
 from tools.execute_query import execute_query
 
 router = APIRouter(prefix="/api")
+
+
+@router.post("/auth/login", response_model=TokenResponse)
+async def login(request: Request, credentials: LoginRequest):
+    """POST /api/auth/login - Exchange username/password for a JWT access token."""
+    config = _load_auth_config()
+    basic_creds = type("BasicCreds", (), {"username": credentials.username, "password": credentials.password})
+    if not config["enabled"] or not _verify_basic_auth(basic_creds, config):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"code": "INVALID_CREDENTIALS", "message": "Invalid username or password."}
+        )
+    token = create_access_token(credentials.username, config)
+    return TokenResponse(
+        access_token=token,
+        token_type="bearer",
+        expires_in=config["token_expire_hours"] * 3600
+    )
+
+
+@router.get("/auth/me", response_model=UserResponse)
+async def me(current_user: dict = Depends(get_current_user)):
+    """GET /api/auth/me - Return the currently authenticated user."""
+    return UserResponse(username=current_user.get("sub", "anonymous"), role=current_user.get("role", "guest"))
 
 def format_sse_event(event_data: dict) -> str:
     """Formats a python dict into standard SSE wire format: data: <json>\n\n"""
@@ -99,7 +133,11 @@ async def stub_sse_generator(request: ChatRequest) -> AsyncGenerator[str, None]:
 from agent.orchestrator import agent_orchestrator
 
 @router.post("/chat")
-async def chat_endpoint(request: ChatRequest):
+async def chat_endpoint(
+    request: ChatRequest,
+    user: dict = Depends(require_auth),
+    _: None = Depends(check_rate_limit)
+):
     """
     POST /api/chat - Main conversational streaming endpoint powered by AgentOrchestrator.
     Emits an SSE stream of typed events (08_APIArchitecture.md & 05_AgentArchitecture.md).
@@ -125,7 +163,10 @@ async def chat_endpoint(request: ChatRequest):
     )
 
 @router.get("/session/{session_id}/history", response_model=HistoryResponse)
-async def get_session_history(session_id: str):
+async def get_session_history(
+    session_id: str,
+    user: dict = Depends(require_auth)
+):
     """GET /api/session/{id}/history - Retrieves message history for a session."""
     messages = session_store.get_messages(session_id)
     records = [MessageRecord(**msg) for msg in messages]
@@ -136,13 +177,16 @@ async def get_session_history(session_id: str):
     )
 
 @router.delete("/session/{session_id}")
-async def clear_session(session_id: str):
+async def clear_session(
+    session_id: str,
+    user: dict = Depends(require_auth)
+):
     """DELETE /api/session/{id} - Clears message history for a session."""
     success = session_store.clear_session(session_id)
     return {"success": success, "message": f"Session {session_id} cleared."}
 
 @router.get("/schema", response_model=SchemaResponse)
-async def direct_schema_introspection():
+async def direct_schema_introspection(user: dict = Depends(require_auth)):
     """GET /api/schema - Direct PRAGMA schema introspection for UI schema panel."""
     res = await get_schema()
     if not res.get("success"):
@@ -162,7 +206,10 @@ from fastapi.responses import Response
 from api.schemas import ExportRequest
 
 @router.post("/export/csv")
-async def export_csv(req: ExportRequest):
+async def export_csv(
+    req: ExportRequest,
+    user: dict = Depends(require_auth)
+):
     """POST /api/export/csv - Execute SELECT query and stream CSV file download."""
     res = await execute_query(req.sql)
     if not res.get("success"):

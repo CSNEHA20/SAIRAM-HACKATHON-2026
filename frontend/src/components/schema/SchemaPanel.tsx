@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { authenticatedFetch } from '../../services/api';
 import { SchemaTable, SchemaColumn, SchemaForeignKey } from '../../types';
 
 export const SchemaPanel: React.FC = () => {
@@ -9,7 +10,7 @@ export const SchemaPanel: React.FC = () => {
   const fetchSchema = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/schema');
+      const res = await authenticatedFetch('/api/schema');
       if (!res.ok) throw new Error('Failed to fetch schema');
       const data = await res.json();
       setTables(data.tables || []);

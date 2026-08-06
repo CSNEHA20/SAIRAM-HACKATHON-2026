@@ -1,27 +1,23 @@
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-import aiosqlite
 from dotenv import load_dotenv
+
+from db.adapters import DatabaseAdapter
+from db.adapters.sqlite import SQLiteAdapter
+from db.adapters.postgres import PostgreSQLAdapter
+from db.adapters.mysql import MySQLAdapter
+from db.adapters.mongodb import MongoDBAdapter
 
 load_dotenv()
 
 DEFAULT_DB_PATH = Path(__file__).parent.parent.parent / "database" / "ecommerce.sqlite"
 
-# Performance indexes defined in 07_DatabaseDesign.md §6
-IDEMPOTENT_INDEXES = [
-    "CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);",
-    "CREATE INDEX IF NOT EXISTS idx_orders_date ON orders(order_date);",
-    "CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);",
-    "CREATE INDEX IF NOT EXISTS idx_order_items_product ON order_items(product_id);",
-    "CREATE INDEX IF NOT EXISTS idx_inventory_product ON inventory(product_id);",
-]
-
 
 def get_db_path() -> str:
+    """Backwards-compatible helper for SQLite path resolution."""
     env_path = os.getenv("DATABASE_PATH")
     if env_path:
-        # Handle relative or absolute paths
         path = Path(env_path)
         if not path.is_absolute():
             path = (Path(__file__).parent.parent / env_path).resolve()
@@ -29,58 +25,88 @@ def get_db_path() -> str:
     return str(DEFAULT_DB_PATH.resolve())
 
 
+def create_adapter(
+    db_type: Optional[str] = None,
+    connection_string: Optional[str] = None,
+    **kwargs: Any
+) -> DatabaseAdapter:
+    """Factory that creates the appropriate database adapter from DB_TYPE."""
+    db_type = (db_type or os.getenv("DB_TYPE", "sqlite")).lower().strip()
+
+    if db_type in ("sqlite",):
+        return SQLiteAdapter(connection_string, **kwargs)
+    if db_type in ("postgres", "postgresql", "psql"):
+        return PostgreSQLAdapter(connection_string, **kwargs)
+    if db_type in ("mysql", "mariadb"):
+        return MySQLAdapter(connection_string, **kwargs)
+    if db_type in ("mongodb", "mongo"):
+        return MongoDBAdapter(connection_string, **kwargs)
+
+    raise ValueError(
+        f"Unsupported DB_TYPE: {db_type}. "
+        "Choose one of: sqlite, postgresql, mysql, mongodb."
+    )
+
+
 class DatabaseManager:
-    """Async SQLite Connection Manager using aiosqlite."""
-    def __init__(self, db_path: Optional[str] = None):
-        self.db_path = db_path or get_db_path()
+    """
+    Async database manager that delegates to a pluggable DatabaseAdapter.
+    Supports SQLite (default), PostgreSQL, MySQL, and MongoDB.
+    """
 
-    async def get_connection(self) -> aiosqlite.Connection:
-        conn = await aiosqlite.connect(self.db_path)
-        conn.row_factory = aiosqlite.Row
-        return conn
+    def __init__(
+        self,
+        adapter: Optional[DatabaseAdapter] = None,
+        db_type: Optional[str] = None,
+        connection_string: Optional[str] = None,
+        **adapter_kwargs: Any
+    ):
+        self.adapter = adapter or create_adapter(db_type, connection_string, **adapter_kwargs)
+        # Backwards-compatible db_path attribute for tools that introspect SQLite directly.
+        self.db_path = getattr(self.adapter, "db_path", get_db_path())
+        self.db_type = self.adapter.name
 
-    async def execute_query_async(self, query: str, params: Optional[tuple] = None) -> Dict[str, Any]:
-        """
-        Executes a SQL query asynchronously and returns a structured envelope:
-        { "columns": [...], "rows": [{...}], "row_count": N }
-        """
-        async with aiosqlite.connect(self.db_path) as conn:
+    async def get_connection(self) -> Any:
+        """Return a raw connection object when available (SQLite only for legacy callers)."""
+        if isinstance(self.adapter, SQLiteAdapter):
+            import aiosqlite
+            conn = await aiosqlite.connect(self.adapter.db_path)
             conn.row_factory = aiosqlite.Row
-            async with conn.execute(query, params or ()) as cursor:
-                rows_data = await cursor.fetchall()
-                columns = [column[0] for column in cursor.description] if cursor.description else []
-                rows = [dict(row) for row in rows_data]
-                return {
-                    "columns": columns,
-                    "rows": rows,
-                    "row_count": len(rows)
-                }
+            return conn
+        raise NotImplementedError("Raw connections are only supported for SQLite adapter.")
+
+    async def execute_query_async(
+        self,
+        query: str,
+        params: Optional[tuple] = None
+    ) -> Dict[str, Any]:
+        """Executes a query asynchronously and returns a structured envelope."""
+        return await self.adapter.execute_query(query, params)
 
     async def execute_script_async(self, script: str) -> None:
         """Execute a SQL script (typically DDL) that does not return rows."""
-        async with aiosqlite.connect(self.db_path) as conn:
-            await conn.executescript(script)
-            await conn.commit()
+        await self.adapter.execute_script(script)
 
     async def ensure_indexes(self) -> None:
-        """Create idempotent performance indexes at startup."""
-        try:
-            await self.execute_script_async("\n".join(IDEMPOTENT_INDEXES))
-        except Exception:
-            # Indexes are optional performance polish; do not fail startup
-            pass
+        """Create idempotent performance indexes at startup (SQL adapters only)."""
+        if isinstance(self.adapter, SQLiteAdapter):
+            await self.adapter.ensure_indexes()
 
     async def check_health(self) -> bool:
         """Startup health probe to verify database accessibility."""
-        try:
-            res = await self.execute_query_async("SELECT 1 AS health_check;")
-            return res.get("row_count", 0) > 0 and res["rows"][0].get("health_check") == 1
-        except Exception:
-            return False
+        return await self.adapter.check_health()
 
     async def initialize(self) -> None:
-        """Run startup probes: health check + index creation."""
-        await self.ensure_indexes()
+        """Run startup probes: health check + adapter initialization."""
+        await self.adapter.initialize()
+
+    async def get_schema(self, table_filter: Optional[List[str]] = None) -> Dict[str, Any]:
+        """Discover database schema via the active adapter."""
+        return await self.adapter.get_schema(table_filter)
+
+    def get_context_description(self) -> str:
+        """Return a human-readable description of the connected engine."""
+        return self.adapter.get_context_description()
 
 
 db_manager = DatabaseManager()

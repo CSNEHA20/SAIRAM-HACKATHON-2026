@@ -73,4 +73,28 @@ describe('useQueryHistory', () => {
     expect(result.current.history).toHaveLength(0);
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
+
+  it('toggles a favorite', () => {
+    const { result } = renderHook(() => useQueryHistory());
+    act(() => result.current.addQuery('top customers'));
+    const id = result.current.history[0].id;
+    act(() => result.current.toggleFavorite(id));
+    expect(result.current.history[0].isFavorite).toBe(true);
+    expect(result.current.favorites).toHaveLength(1);
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+    expect(stored[0].isFavorite).toBe(true);
+    act(() => result.current.toggleFavorite(id));
+    expect(result.current.history[0].isFavorite).toBe(false);
+    expect(result.current.favorites).toHaveLength(0);
+  });
+
+  it('loads persisted favorites from localStorage', () => {
+    const stored: HistoryItem[] = [
+      { id: '1', query: 'show orders', timestamp: '2024-01-01T00:00:00.000Z', isFavorite: true, favoritedAt: '2024-01-01T00:00:01.000Z' },
+    ];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    const { result } = renderHook(() => useQueryHistory());
+    expect(result.current.favorites).toHaveLength(1);
+    expect(result.current.favorites[0].query).toBe('show orders');
+  });
 });

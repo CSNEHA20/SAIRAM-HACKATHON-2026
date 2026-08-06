@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import html2canvas from 'html2canvas';
+import { authenticatedFetch } from '../../services/api';
 
 interface ExportButtonProps {
   sqlUsed?: string[];
@@ -36,7 +37,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, chartContai
     try {
       setIsExporting(true);
       const lastSql = sqlUsed[sqlUsed.length - 1];
-      const res = await fetch('/api/export/csv', {
+      const res = await authenticatedFetch('/api/export/csv', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sql: lastSql, filename: 'querymind_export' }),

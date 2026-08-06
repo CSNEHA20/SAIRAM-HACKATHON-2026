@@ -7,6 +7,7 @@ from api.router import router as api_router
 from api.schemas import HealthResponse
 from db.connection import db_manager
 from agent.orchestrator import agent_orchestrator
+from agent.session import session_store
 
 load_dotenv()
 
@@ -34,8 +35,9 @@ app.include_router(api_router)
 
 @app.on_event("startup")
 async def startup_event():
-    """Startup probe: ensure indexes exist and DB is reachable."""
+    """Startup probe: ensure indexes exist, DB is reachable, and session store is ready."""
     await db_manager.initialize()
+    await session_store.initialize()
 
 @app.get("/api/health", response_model=HealthResponse)
 async def health_check():
@@ -49,6 +51,13 @@ async def health_check():
         claude_api="reachable" if claude_reachable else "unreachable",
         version="1.0.0"
     )
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Gracefully close the session backend on shutdown."""
+    await session_store.close()
+
 
 if __name__ == "__main__":
     import uvicorn

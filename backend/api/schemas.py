@@ -50,6 +50,19 @@ class HealthResponse(BaseModel):
     claude_api: str
     version: str = "1.0.0"
 
+class LoginRequest(BaseModel):
+    username: str = Field(..., min_length=1, description="Username for basic auth login")
+    password: str = Field(..., min_length=1, description="Password for basic auth login")
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+
+class UserResponse(BaseModel):
+    username: str
+    role: str
+
 class ExportRequest(BaseModel):
     sql: str = Field(..., description="SQL SELECT query to execute and export")
     filename: Optional[str] = Field(default="export", description="Base filename without extension")

@@ -21,7 +21,7 @@ except ImportError:
     AsyncOpenAI = None
     HAS_OPENAI = False
 
-from agent.prompt import SYSTEM_PROMPT
+from agent.prompt import SYSTEM_PROMPT, build_system_prompt
 from agent.session import session_store
 from agent.tool_registry import TOOL_SCHEMAS, execute_tool
 
@@ -186,7 +186,7 @@ class AgentOrchestrator:
                 response = await self.client.messages.create(
                     model=self.model,
                     max_tokens=4096,
-                    system=SYSTEM_PROMPT,
+                    system=build_system_prompt(),
                     tools=TOOL_SCHEMAS,
                     messages=messages
                 )
@@ -311,7 +311,7 @@ class AgentOrchestrator:
             })
 
         # Format system prompt message at start of chain
-        oai_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        oai_messages = [{"role": "system", "content": build_system_prompt()}]
         for m in messages:
             oai_messages.append({"role": m["role"], "content": m["content"]})
 
