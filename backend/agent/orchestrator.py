@@ -28,7 +28,7 @@ from agent.tool_registry import TOOL_SCHEMAS, execute_tool
 load_dotenv()
 
 MAX_TOOL_ITERATIONS = int(os.getenv("MAX_TOOL_ITERATIONS", "8"))
-DEFAULT_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+DEFAULT_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
 
 
 def format_sse(event_dict: dict) -> str:
@@ -51,8 +51,15 @@ class AgentOrchestrator:
     """
 
     def __init__(self):
+        self._refresh_clients()
+
+    def _refresh_clients(self):
+        """Dynamically reload environment variables and configure provider clients."""
+        load_dotenv(override=True)
+
         self.api_key = os.getenv("ANTHROPIC_API_KEY", "")
         self.model = os.getenv("ANTHROPIC_MODEL", DEFAULT_MODEL)
+        self.offline_demo_mode = os.getenv("OFFLINE_DEMO_MODE", "false").lower() in ("true", "1", "yes")
         self.is_mock_key = (
             not HAS_ANTHROPIC
             or not self.api_key
@@ -94,6 +101,7 @@ class AgentOrchestrator:
 
     def is_claude_reachable(self) -> bool:
         """Returns whether a real Anthropic or NVIDIA/OpenAI client is configured."""
+        self._refresh_clients()
         return (self.client is not None and not self.is_mock_key) or (
             self.openai_client is not None and not self.is_nvidia_mock
         )
@@ -111,6 +119,9 @@ class AgentOrchestrator:
         """
         Main ReAct Loop async generator emitting 8-event SSE stream.
         """
+        # Always refresh environment settings on incoming stream request
+        self._refresh_clients()
+
         message_id = f"msg_{uuid.uuid4().hex[:10]}"
         clean_msg = message.strip()
 
@@ -124,17 +135,31 @@ class AgentOrchestrator:
             api_messages.append({"role": msg["role"], "content": msg["content"]})
         api_messages.append({"role": "user", "content": clean_msg})
 
-        # Run real Anthropic API loop if valid key exists, otherwise NVIDIA/OpenAI, otherwise fallback offline loop
+        # Run real Anthropic API loop if valid key exists, otherwise NVIDIA/OpenAI, otherwise offline demo mode or error.
         try:
-            if not self.is_mock_key and self.client:
-                async for sse_chunk in self._run_claude_loop(api_messages, session_id, message_id, show_sql):
-                    yield sse_chunk
-            elif not self.is_nvidia_mock and self.openai_client:
-                async for sse_chunk in self._run_openai_loop(api_messages, session_id, message_id, show_sql):
-                    yield sse_chunk
-            else:
+            has_real_provider = (not self.is_mock_key and self.client is not None) or (
+                not self.is_nvidia_mock and self.openai_client is not None
+            )
+            if has_real_provider:
+                if not self.is_mock_key and self.client:
+                    async for sse_chunk in self._run_claude_loop(api_messages, session_id, message_id, show_sql):
+                        yield sse_chunk
+                else:
+                    async for sse_chunk in self._run_openai_loop(api_messages, session_id, message_id, show_sql):
+                        yield sse_chunk
+            elif self.offline_demo_mode:
                 async for sse_chunk in self._run_offline_loop(clean_msg, session_id, message_id, show_sql):
                     yield sse_chunk
+            else:
+                yield format_sse({
+                    "type": "error",
+                    "code": "CLAUDE_UNCONFIGURED",
+                    "message": (
+                        "No LLM provider is configured. Set a valid ANTHROPIC_API_KEY in your .env file, "
+                        "or enable OFFLINE_DEMO_MODE=true for a deterministic demo without an API key."
+                    )
+                })
+                return
         except Exception as e:
             # Last-resort error event so the stream always terminates gracefully
             yield format_sse({
@@ -253,12 +278,13 @@ class AgentOrchestrator:
             })
 
         except Exception as e:
-            # Fall back gracefully to offline loop on API failure
-            fallback_msg = messages[-1]["content"] if messages else ""
-            if isinstance(fallback_msg, list):
-                fallback_msg = str(fallback_msg)
-            async for sse_chunk in self._run_offline_loop(fallback_msg, session_id, message_id, show_sql):
-                yield sse_chunk
+            # Graceful failure: emit a friendly error event instead of switching to mock data.
+            print(f"[Anthropic API Error]: {type(e).__name__}: {str(e)}")
+            yield format_sse({
+                "type": "error",
+                "code": "API_ERROR",
+                "message": f"Anthropic API call failed ({type(e).__name__}): {str(e)}"
+            })
 
     async def _run_openai_loop(
         self,
@@ -384,12 +410,12 @@ class AgentOrchestrator:
             })
 
         except Exception as e:
-            # Fall back gracefully to offline loop on API failure
-            fallback_msg = messages[-1]["content"] if messages else ""
-            if isinstance(fallback_msg, list):
-                fallback_msg = str(fallback_msg)
-            async for sse_chunk in self._run_offline_loop(fallback_msg, session_id, message_id, show_sql):
-                yield sse_chunk
+            print(f"[NVIDIA/OpenAI API Error]: {type(e).__name__}: {str(e)}")
+            yield format_sse({
+                "type": "error",
+                "code": "API_ERROR",
+                "message": f"NVIDIA/OpenAI API Call Failed ({type(e).__name__}): {str(e)}"
+            })
 
     async def _run_offline_loop(
         self,

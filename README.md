@@ -20,7 +20,7 @@ DataFlow AI is a production-grade, conversational database analytics application
 
 ## 🛠 Tech Stack
 
-- **Backend:** FastAPI, Python 3.11, Anthropic Claude SDK (`claude-3-5-sonnet-20241022`), `aiosqlite`, `pydantic`
+- **Backend:** FastAPI, Python 3.11, Anthropic Claude SDK (`claude-sonnet-4-6`), `aiosqlite`, `pydantic`
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Recharts, Mermaid.js, `react-markdown`, `html2canvas`
 - **Database:** SQLite (`database/ecommerce.sqlite`)
 - **Containerization:** Docker, Docker Compose, Nginx
@@ -73,7 +73,7 @@ cd sairam-hackathon-2026
 
 # 2. Copy environment file and configure API Key
 cp .env.example .env
-# Add your ANTHROPIC_API_KEY to .env (leave as mock_key_for_dev for offline demo)
+# Add your ANTHROPIC_API_KEY to .env, or set OFFLINE_DEMO_MODE=true for a keyless deterministic demo
 
 # 3. Start full stack with Docker Compose
 docker-compose up --build

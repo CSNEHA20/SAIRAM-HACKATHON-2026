@@ -1,16 +1,17 @@
 import React, { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { IMessage } from '../../types';
-import { Bot, User, Code2, ChevronDown, ChevronUp, Copy, Check, AlertCircle } from 'lucide-react';
+import { Bot, User, Code2, ChevronDown, ChevronUp, Copy, Check, AlertCircle, RefreshCw } from 'lucide-react';
 import { ChartRenderer } from '../charts/ChartRenderer';
 import { DiagramRenderer } from '../diagrams/DiagramRenderer';
 import { ExportButton } from './ExportButton';
 
 interface MessageBubbleProps {
   message: IMessage;
+  onRetry?: () => void;
 }
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
+export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onRetry }) => {
   const isUser = message.role === 'user';
   const [showSql, setShowSql] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
@@ -113,12 +114,23 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
         {/* Error Callout */}
         {message.error && (
-          <div className="mt-3 p-3 rounded bg-error-container/20 border border-error-container text-error text-body-sm flex items-start gap-2">
-            <span className="material-symbols-outlined text-sm shrink-0 mt-0.5">error</span>
-            <div>
-              <p className="font-bold font-label-md tracking-wider uppercase">Execution Error</p>
-              <p className="mt-0.5 opacity-90">{message.error}</p>
+          <div className="mt-3 p-3 rounded bg-error-container/20 border border-error-container text-error text-body-sm">
+            <div className="flex items-start gap-2">
+              <span className="material-symbols-outlined text-sm shrink-0 mt-0.5">error</span>
+              <div className="flex-1">
+                <p className="font-bold font-label-md tracking-wider uppercase">Execution Error</p>
+                <p className="mt-0.5 opacity-90">{message.error}</p>
+              </div>
             </div>
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded bg-error-container text-error hover:bg-error-container/80 transition-colors text-label-md font-label-md"
+              >
+                <span className="material-symbols-outlined text-sm">refresh</span>
+                Retry
+              </button>
+            )}
           </div>
         )}
 

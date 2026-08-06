@@ -1,7 +1,8 @@
+import os
 import pytest
 import json
 from agent.tool_registry import TOOL_SCHEMAS, TOOL_MAP, execute_tool
-from agent.orchestrator import agent_orchestrator
+from agent.orchestrator import agent_orchestrator, AgentOrchestrator
 
 def test_tool_schemas_and_map():
     assert len(TOOL_SCHEMAS) == 5
@@ -75,3 +76,33 @@ async def test_agent_orchestrator_stream():
     assert "execute_query" in combined
     assert "token" in combined
     assert "done" in combined
+
+
+@pytest.mark.asyncio
+async def test_agent_orchestrator_requires_key_or_offline_mode():
+    """When no real provider is configured and offline demo is disabled, the orchestrator must emit a clear error."""
+    old_offline = os.environ.get("OFFLINE_DEMO_MODE")
+    old_key = os.environ.get("ANTHROPIC_API_KEY")
+    try:
+        os.environ["OFFLINE_DEMO_MODE"] = "false"
+        os.environ["ANTHROPIC_API_KEY"] = ""
+        orchestrator = AgentOrchestrator()
+        events = []
+        async for sse_chunk in orchestrator.process_message_stream(
+            message="Show top 5 products",
+            session_id="keyless_test_session",
+            show_sql=True
+        ):
+            events.append(sse_chunk)
+        combined = "".join(events)
+        assert "CLAUDE_UNCONFIGURED" in combined
+        assert "ANTHROPIC_API_KEY" in combined
+    finally:
+        if old_offline is not None:
+            os.environ["OFFLINE_DEMO_MODE"] = old_offline
+        else:
+            os.environ.pop("OFFLINE_DEMO_MODE", None)
+        if old_key is not None:
+            os.environ["ANTHROPIC_API_KEY"] = old_key
+        else:
+            os.environ.pop("ANTHROPIC_API_KEY", None)

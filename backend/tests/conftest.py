@@ -1,4 +1,8 @@
 import os
+
+# Enable the deterministic offline demo loop for tests so the suite runs without a real API key.
+os.environ["OFFLINE_DEMO_MODE"] = "true"
+
 import pytest
 import pytest_asyncio
 from pathlib import Path

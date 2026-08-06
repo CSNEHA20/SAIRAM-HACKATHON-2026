@@ -35,6 +35,17 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
   const isBusy = status === 'connecting' || status === 'streaming';
   const showWelcomeChips = messages.length <= 1;
 
+  const handleRetry = (messageId: string) => {
+    const assistantIndex = messages.findIndex((m) => m.id === messageId);
+    if (assistantIndex <= 0) return;
+    for (let i = assistantIndex - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        onSend(messages[i].content);
+        return;
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-background relative flex-1">
       {/* Scrollable Message List */}
@@ -65,7 +76,11 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
         )}
 
         {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            onRetry={msg.role === 'assistant' && msg.error ? () => handleRetry(msg.id) : undefined}
+          />
         ))}
 
         {/* Typing / Active Tool Indicator */}
