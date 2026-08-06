@@ -11,6 +11,16 @@ try:
 except ImportError:
     anthropic = None
     HAS_ANTHROPIC = False
+
+try:
+    import openai
+    from openai import AsyncOpenAI
+    HAS_OPENAI = True
+except ImportError:
+    openai = None
+    AsyncOpenAI = None
+    HAS_OPENAI = False
+
 from agent.prompt import SYSTEM_PROMPT
 from agent.session import session_store
 from agent.tool_registry import TOOL_SCHEMAS, execute_tool
@@ -36,7 +46,7 @@ async def _stream_text(text: str) -> AsyncGenerator[str, None]:
 
 class AgentOrchestrator:
     """
-    ReAct Agent Orchestrator managing Claude Messages API tool_use loop.
+    ReAct Agent Orchestrator managing Anthropic Messages API & OpenAI/NVIDIA Nemotron tool_use loops.
     References: 05_AgentArchitecture.md & 10_BackendArchitecture.md
     """
 
@@ -54,9 +64,43 @@ class AgentOrchestrator:
         else:
             self.client = None
 
+        # NVIDIA Nemotron / OpenAI-compatible configuration
+        self.nvidia_key = (
+            os.getenv("NVIDIA_API_KEY")
+            or os.getenv("NEMOTRON_API_KEY")
+            or os.getenv("OPENAI_API_KEY", "")
+        )
+        self.nvidia_base_url = os.getenv(
+            "NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1"
+        )
+        self.nvidia_model = (
+            os.getenv("NVIDIA_MODEL")
+            or os.getenv("NEMOTRON_MODEL")
+            or os.getenv("OPENAI_MODEL", "nvidia/llama-3.1-nemotron-70b-instruct")
+        )
+        self.is_nvidia_mock = (
+            not HAS_OPENAI
+            or not self.nvidia_key
+            or self.nvidia_key == "mock_key_for_dev"
+            or "your_nvidia_api_key" in self.nvidia_key
+        )
+        if not self.is_nvidia_mock and HAS_OPENAI and AsyncOpenAI:
+            self.openai_client = AsyncOpenAI(
+                api_key=self.nvidia_key,
+                base_url=self.nvidia_base_url
+            )
+        else:
+            self.openai_client = None
+
     def is_claude_reachable(self) -> bool:
-        """Returns whether a real Anthropic client is configured."""
-        return self.client is not None and not self.is_mock_key
+        """Returns whether a real Anthropic or NVIDIA/OpenAI client is configured."""
+        return (self.client is not None and not self.is_mock_key) or (
+            self.openai_client is not None and not self.is_nvidia_mock
+        )
+
+    def is_llm_reachable(self) -> bool:
+        """Returns whether any real LLM provider client is configured."""
+        return self.is_claude_reachable()
 
     async def process_message_stream(
         self,
@@ -80,10 +124,13 @@ class AgentOrchestrator:
             api_messages.append({"role": msg["role"], "content": msg["content"]})
         api_messages.append({"role": "user", "content": clean_msg})
 
-        # Run real Claude API loop if valid key exists, otherwise fallback to offline agent loop
+        # Run real Anthropic API loop if valid key exists, otherwise NVIDIA/OpenAI, otherwise fallback offline loop
         try:
             if not self.is_mock_key and self.client:
                 async for sse_chunk in self._run_claude_loop(api_messages, session_id, message_id, show_sql):
+                    yield sse_chunk
+            elif not self.is_nvidia_mock and self.openai_client:
+                async for sse_chunk in self._run_openai_loop(api_messages, session_id, message_id, show_sql):
                     yield sse_chunk
             else:
                 async for sse_chunk in self._run_offline_loop(clean_msg, session_id, message_id, show_sql):
@@ -199,6 +246,137 @@ class AgentOrchestrator:
                     return
 
             # Iteration limit reached
+            yield format_sse({
+                "type": "error",
+                "code": "TOOL_ERROR",
+                "message": "Maximum tool iteration limit reached."
+            })
+
+        except Exception as e:
+            # Fall back gracefully to offline loop on API failure
+            fallback_msg = messages[-1]["content"] if messages else ""
+            if isinstance(fallback_msg, list):
+                fallback_msg = str(fallback_msg)
+            async for sse_chunk in self._run_offline_loop(fallback_msg, session_id, message_id, show_sql):
+                yield sse_chunk
+
+    async def _run_openai_loop(
+        self,
+        messages: List[Dict[str, Any]],
+        session_id: str,
+        message_id: str,
+        show_sql: bool
+    ) -> AsyncGenerator[str, None]:
+        """Real OpenAI / NVIDIA Nemotron API ReAct loop with function calling."""
+        iterations = 0
+        assistant_response_content: List[str] = []
+        sql_statements_used: List[str] = []
+
+        # Convert TOOL_SCHEMAS to OpenAI format
+        openai_tools = []
+        for schema in TOOL_SCHEMAS:
+            openai_tools.append({
+                "type": "function",
+                "function": {
+                    "name": schema["name"],
+                    "description": schema["description"],
+                    "parameters": schema.get("input_schema", {"type": "object", "properties": {}})
+                }
+            })
+
+        # Format system prompt message at start of chain
+        oai_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        for m in messages:
+            oai_messages.append({"role": m["role"], "content": m["content"]})
+
+        try:
+            while iterations < MAX_TOOL_ITERATIONS:
+                iterations += 1
+
+                response = await self.openai_client.chat.completions.create(
+                    model=self.nvidia_model,
+                    messages=oai_messages,
+                    tools=openai_tools,
+                    tool_choice="auto"
+                )
+
+                choice = response.choices[0]
+                msg = choice.message
+
+                # Case 1: Model invokes tool(s)
+                if msg.tool_calls:
+                    # Append assistant message containing tool calls
+                    oai_messages.append(msg)
+
+                    for tool_call in msg.tool_calls:
+                        tool_name = tool_call.function.name
+                        try:
+                            tool_inputs = json.loads(tool_call.function.arguments or "{}")
+                        except Exception:
+                            tool_inputs = {}
+
+                        # Event: tool_start
+                        yield format_sse({"type": "tool_start", "tool": tool_name})
+                        await asyncio.sleep(0.03)
+
+                        # Execute tool via registry
+                        res_envelope = await execute_tool(tool_name, tool_inputs)
+
+                        if tool_name == "get_schema" and res_envelope.get("success"):
+                            session_store.set_schema_cache(session_id, res_envelope)
+                        success = res_envelope.get("success", False)
+
+                        # Event: tool_end
+                        yield format_sse({"type": "tool_end", "tool": tool_name, "success": success})
+
+                        # Derived SSE events
+                        if tool_name == "execute_query" and success and show_sql:
+                            sql = res_envelope.get("sql") or res_envelope.get("sql_executed")
+                            if sql:
+                                sql_statements_used.append(sql)
+                                yield format_sse({"type": "sql", "content": sql})
+                        elif tool_name == "generate_chart" and success:
+                            yield format_sse({
+                                "type": "chart",
+                                "chart_type": res_envelope.get("chart_type", "bar"),
+                                "title": res_envelope.get("title", ""),
+                                "data": res_envelope.get("data", []),
+                                "config": res_envelope.get("config", {})
+                            })
+                        elif tool_name == "generate_flowchart" and success:
+                            yield format_sse({
+                                "type": "diagram",
+                                "diagram_type": res_envelope.get("diagram_type", "flowchart"),
+                                "title": res_envelope.get("title", ""),
+                                "mermaid": res_envelope.get("mermaid", "")
+                            })
+
+                        # Append tool execution result
+                        oai_messages.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": json.dumps(res_envelope)
+                        })
+
+                # Case 2: Model finishes with final answer
+                elif msg.content:
+                    assistant_response_content.append(msg.content)
+                    async for token_event in _stream_text(msg.content):
+                        yield token_event
+                        await asyncio.sleep(0.01)
+
+                    full_text = "".join(assistant_response_content)
+                    session_store.add_message(
+                        session_id,
+                        "assistant",
+                        full_text,
+                        sql_used=sql_statements_used
+                    )
+                    yield format_sse({"type": "done", "message_id": message_id})
+                    return
+                else:
+                    break
+
             yield format_sse({
                 "type": "error",
                 "code": "TOOL_ERROR",
