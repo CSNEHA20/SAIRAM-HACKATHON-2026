@@ -54,9 +54,7 @@ class AgentOrchestrator:
         self._refresh_clients()
 
     def _refresh_clients(self):
-        """Dynamically reload environment variables and configure provider clients."""
-        load_dotenv(override=True)
-
+        """Reload provider clients from current environment variables."""
         self.api_key = os.getenv("ANTHROPIC_API_KEY", "")
         self.model = os.getenv("ANTHROPIC_MODEL", DEFAULT_MODEL)
         self.offline_demo_mode = os.getenv("OFFLINE_DEMO_MODE", "false").lower() in ("true", "1", "yes")

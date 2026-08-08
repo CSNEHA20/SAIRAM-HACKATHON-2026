@@ -8,68 +8,58 @@ async def generate_flowchart(
     **kwargs
 ) -> Dict[str, Any]:
     """
-    07_ToolSpecifications.md § Tool 4 - generate_flowchart tool implementation.
-    Generates Mermaid.js diagram strings for ER diagrams, process flows, or sequence diagrams.
+    30_ToolSpecifications.md §30.4 & 12_FlowchartArchitecture.md - generate_flowchart tool implementation.
+    Supports Path A (Auto-ER from schema_data) and Path B (Mermaid pass-through).
     """
-    valid_types = ["er", "flowchart", "sequence"]
-    if diagram_type not in valid_types:
+    if diagram_type not in ["er", "flowchart", "sequence"]:
         return {
             "success": False,
-            "error": f"Invalid diagram_type '{diagram_type}'. Must be one of: {', '.join(valid_types)}"
+            "error": f"diagram_type '{diagram_type}' is not supported. Use: er, flowchart, sequence"
         }
 
-    # Case A: Auto-generate ER diagram from schema_data if schema_data provided
+    # Path A: Auto-ER from schema_data
     if schema_data and "tables" in schema_data:
-        lines = ["erDiagram"]
+        mermaid_lines = ["erDiagram"]
         tables = schema_data["tables"]
         for t in tables:
             tname = t["name"].upper()
-            lines.append(f"    {tname} {{")
+            mermaid_lines.append(f"    {tname} {{")
             for c in t.get("columns", []):
                 ctype = c.get("type", "TEXT")
                 cname = c.get("name")
                 pk = "PK" if c.get("pk") else ""
-                lines.append(f"        {ctype} {cname} {pk}".strip())
-            lines.append("    }")
-        
-        # Add relationships
-        for t in tables:
-            tname = t["name"].upper()
+                mermaid_lines.append(f"        {ctype} {cname} {pk}".strip())
+            mermaid_lines.append("    }")
+
             for fk in t.get("foreign_keys", []):
-                target = fk.get("target_table") or fk.get("table")
+                target = fk.get("target_table", "").upper() or fk.get("table", "").upper()
                 if target:
-                    lines.append(f"    {tname} }}|--|| {target.upper()} : references")
+                    mermaid_lines.append(f"    {tname} ||--o{{ {target} : \"references\"")
         
-        mermaid_str = "\n".join(lines)
         return {
             "success": True,
-            "diagram_type": diagram_type,
+            "diagram_type": "er",
             "title": title or "Database ER Diagram",
-            "mermaid": mermaid_str,
-            "mermaid_code": mermaid_str
+            "mermaid": "\n".join(mermaid_lines)
         }
 
-    # Case B: Direct Mermaid code provided
+    # Path B: User/LLM provided mermaid_code
     if mermaid_code:
-        clean_code = mermaid_code.strip()
-
-        # Simple auto-prefix if diagram type header missing
-        if diagram_type == "er" and not clean_code.startswith("erDiagram"):
-            clean_code = "erDiagram\n" + clean_code
-        elif diagram_type == "flowchart" and not (clean_code.startswith("flowchart") or clean_code.startswith("graph")):
-            clean_code = "flowchart TD\n" + clean_code
-        elif diagram_type == "sequence" and not clean_code.startswith("sequenceDiagram"):
-            clean_code = "sequenceDiagram\n" + clean_code
-
+        code = mermaid_code.strip()
+        if diagram_type == "flowchart" and not (code.startswith("flowchart") or code.startswith("graph")):
+            code = f"flowchart TD\n    {code}"
+        elif diagram_type == "er" and not code.startswith("erDiagram"):
+            code = f"erDiagram\n    {code}"
+        elif diagram_type == "sequence" and not code.startswith("sequenceDiagram"):
+            code = f"sequenceDiagram\n    {code}"
         return {
             "success": True,
             "diagram_type": diagram_type,
             "title": title or f"{diagram_type.capitalize()} Diagram",
-            "mermaid": clean_code,
-            "mermaid_code": clean_code
+            "mermaid": code
         }
 
     return {
         "success": False,
-        "error": "Either 'mermaid_code' or 'schema_data' must be provided to generate a diagram."
+        "error": "Either mermaid_code or schema_data must be provided to generate a flowchart."
     }

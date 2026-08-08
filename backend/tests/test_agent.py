@@ -83,9 +83,13 @@ async def test_agent_orchestrator_requires_key_or_offline_mode():
     """When no real provider is configured and offline demo is disabled, the orchestrator must emit a clear error."""
     old_offline = os.environ.get("OFFLINE_DEMO_MODE")
     old_key = os.environ.get("ANTHROPIC_API_KEY")
+    old_nvidia_key = os.environ.get("NVIDIA_API_KEY")
+    old_openai_key = os.environ.get("OPENAI_API_KEY")
     try:
         os.environ["OFFLINE_DEMO_MODE"] = "false"
         os.environ["ANTHROPIC_API_KEY"] = ""
+        os.environ.pop("NVIDIA_API_KEY", None)
+        os.environ.pop("OPENAI_API_KEY", None)
         orchestrator = AgentOrchestrator()
         events = []
         async for sse_chunk in orchestrator.process_message_stream(
@@ -106,3 +110,11 @@ async def test_agent_orchestrator_requires_key_or_offline_mode():
             os.environ["ANTHROPIC_API_KEY"] = old_key
         else:
             os.environ.pop("ANTHROPIC_API_KEY", None)
+        if old_nvidia_key is not None:
+            os.environ["NVIDIA_API_KEY"] = old_nvidia_key
+        else:
+            os.environ.pop("NVIDIA_API_KEY", None)
+        if old_openai_key is not None:
+            os.environ["OPENAI_API_KEY"] = old_openai_key
+        else:
+            os.environ.pop("OPENAI_API_KEY", None)

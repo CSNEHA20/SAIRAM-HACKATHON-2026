@@ -13,33 +13,29 @@ async def generate_chart(
 ) -> Dict[str, Any]:
     """
     30_ToolSpecifications.md §30.3 - generate_chart tool implementation.
-    Converts query result rows into chart configuration for the frontend renderer.
+    Produces chart configuration JSON for frontend Recharts renderer.
     """
-    valid_types = ["bar", "line", "pie", "scatter"]
-    if chart_type not in valid_types:
+    if chart_type not in ["bar", "line", "pie", "scatter"]:
         return {
             "success": False,
-            "error": f"Invalid chart_type '{chart_type}'. Must be one of: {', '.join(valid_types)}."
+            "error": f"chart_type '{chart_type}' is not supported. Use: bar, line, pie, scatter"
         }
-    if not data or not isinstance(data, list):
-        return {"success": False, "error": "Cannot generate chart: dataset is empty or invalid."}
+    if not data:
+        return {"success": False, "error": "data array is empty — no rows to chart."}
     
     first_row = data[0]
-    if not isinstance(first_row, dict):
-        return {"success": False, "error": "Cannot generate chart: row items are not objects."}
-
     if x_key not in first_row or y_key not in first_row:
         available = list(first_row.keys())
         return {
             "success": False,
-            "error": f"Column '{x_key}' or '{y_key}' not found in dataset.",
+            "error": f"Keys '{x_key}' or '{y_key}' not found in dataset.",
             "hint": f"Available columns in data: {', '.join(available)}"
         }
 
     return {
         "success": True,
         "chart_type": chart_type,
-        "title": title or f"{chart_type.capitalize()} Chart: {y_label or y_key} by {x_label or x_key}",
+        "title": title or f"{chart_type.capitalize()} Chart: {y_key} by {x_key}",
         "data": data,
         "config": {
             "x_key": x_key,
