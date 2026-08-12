@@ -126,7 +126,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ sqlUsed, chartContai
           className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high dark:bg-[#1b1c1c] border border-outline-variant dark:border-[#2f3131] text-[10px] font-semibold text-on-surface-variant hover:text-primary dark:hover:text-secondary-fixed hover:border-primary/50 transition-all cursor-pointer disabled:opacity-40 uppercase tracking-wider"
           title="Download query dataset as CSV"
         >
-          <span className="material-symbols-outlined text-sm text-secondary dark:text-secondary-fixed">csv</span>
+          <span className="material-symbols-outlined text-sm text-secondary dark:text-secondary-fixed">table_view</span>
           CSV
         </button>
       )}
