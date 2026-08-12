@@ -43,7 +43,7 @@ export const SideNavBar: React.FC<SideNavBarProps> = ({
           {/* NEW QUERY Button */}
           <button
             onClick={onNewQuery}
-            className="w-full mt-3 bg-primary dark:bg-secondary text-on-primary dark:text-on-secondary-container font-bold text-[11px] py-2.5 px-4 rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer tracking-widest shadow-sm"
+            className="w-full mt-3 bg-primary dark:bg-secondary text-on-primary dark:text-on-secondary font-bold text-[11px] py-2.5 px-4 rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer tracking-widest shadow-sm"
           >
             <span className="material-symbols-outlined text-[16px]">add</span>
             NEW QUERY
