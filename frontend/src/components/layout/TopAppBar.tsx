@@ -48,18 +48,8 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({ health, rightActions, onOp
           </span>
         </div>
 
-        {/* Center — Global Search */}
-        <div className="flex-1 flex justify-center">
-          <div className="hidden md:flex items-center bg-surface-container-low dark:bg-[#1b1c1c] rounded-xl px-4 py-2 border border-outline-variant dark:border-[#2f3131] w-full max-w-md gap-2 transition-colors focus-within:border-primary/50 dark:focus-within:border-secondary/50">
-            <span className="material-symbols-outlined text-on-surface-variant dark:text-on-tertiary-container text-[18px]">search</span>
-            <input
-              className="bg-transparent border-none focus:ring-0 text-sm text-on-surface dark:text-tertiary-fixed w-full placeholder-on-surface-variant dark:placeholder-on-tertiary-container p-0 outline-none"
-              placeholder="Global search... ⌘K"
-              type="text"
-            />
-            <span className="text-[10px] text-on-surface-variant dark:text-on-tertiary-container font-mono px-1.5 py-0.5 rounded border border-outline-variant dark:border-[#2f3131] hidden lg:block">⌘K</span>
-          </div>
-        </div>
+        {/* Spacer */}
+        <div className="flex-grow"></div>
 
         {/* Right — Controls */}
         <div className="flex items-center gap-2 min-w-fit">
