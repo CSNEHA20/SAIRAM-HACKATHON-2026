@@ -1,4 +1,4 @@
-# QueryMind — Conversational Database Intelligence Platform
+# 🧠 QueryMind 💬 — Conversational Database Intelligence Platform 📊⚡
 
 > **Sairam Hackathon 2026 Submission** | Team Name : **VibeSync Macros** | Team Lead: **Vishal L.** | Team Members: **Sneha C.**, **Meenakshi A.P.**
 
@@ -7,6 +7,25 @@
 [![LLM](https://img.shields.io/badge/AI%20Engine-Claude%20Sonnet%204.6%20%2F%20NVIDIA%20Nemotron-7A42E6.svg?style=flat-square)](https://www.anthropic.com/)
 [![SQLite](https://img.shields.io/badge/Database-SQLite%20%2F%20Multi--DB-003B57.svg?style=flat-square&logo=sqlite)](https://www.sqlite.org/)
 [![Docker](https://img.shields.io/badge/Deployment-Docker%20%2F%20K8s-2496ED.svg?style=flat-square&logo=docker)](https://www.docker.com/)
+
+---
+
+### 🏷️ Tech Stack & Keywords
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React_18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Google Stitch](https://img.shields.io/badge/Stitch-Design_System-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![Claude Sonnet 4.6](https://img.shields.io/badge/Anthropic_Claude-D97706?style=for-the-badge&logo=anthropic&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Recharts](https://img.shields.io/badge/Recharts-22B5BF?style=for-the-badge&logo=chartdotjs&logoColor=white)
+![Mermaid.js](https://img.shields.io/badge/Mermaid.js-FF3621?style=for-the-badge&logo=mermaid&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
 
 **QueryMind** is an enterprise-grade, conversational database analytics and intelligence platform. It converts natural-language business questions into validated, safe, read-only SQL queries, streams step-by-step reasoning via Server-Sent Events (SSE), dynamically generates 12+ interactive chart types, auto-renders Mermaid ER diagrams and flowcharts, and provides grounded dataset statistical explanations.
 
@@ -17,12 +36,13 @@
 - [The Problem](#-the-problem)
 - [The Idea](#-the-idea)
 - [Why QueryMind?](#-why-querymind)
+- [Datasets Used in Project](#-datasets-used-in-project)
 - [How QueryMind Works](#-how-querymind-works)
 - [Key Features](#-key-features)
 - [Conversational Database Agent](#-conversational-database-agent)
 - [Agent Tools](#-agent-tools)
 - [Database Intelligence & Safety](#-database-intelligence--safety)
-- [Interactive Visualizations](#-interactive-visualizations)
+- [Interactive Visualizations & Light/Dark Mode](#-interactive-visualizations--lightdark-mode)
 - [Automated Diagrams](#-automated-diagrams)
 - [SQL Transparency](#-sql-transparency)
 - [Agent Execution & Tool Progress](#-agent-execution--tool-progress)
@@ -34,7 +54,7 @@
 - [Prompts & AI Techniques](#-prompts--ai-techniques)
 - [Example Queries & Capabilities](#-example-queries--capabilities)
 - [User Journey](#-user-journey)
-- [UI/UX Design Philosophy](#-uiux-design-philosophy)
+- [UI/UX Design Philosophy & Stitch Design System](#-uiux-design-philosophy--stitch-design-system)
 - [Project Structure](#-project-structure)
 - [Installation & Quick Start](#-installation--quick-start)
 - [Environment Variables](#-environment-variables)
@@ -73,7 +93,7 @@ Instead of outputting raw SQL text alone, QueryMind orchestrates an end-to-end d
 
 ## 🚀 Why QueryMind?
 
-| Feature | Legacy Text-to-SQL | QueryMind |
+| **Feature** | **Legacy Text-to-SQL** | **QueryMind** |
 |---|---|---|
 | **Architecture** | Single-prompt completion | Autonomous ReAct Multi-Tool Agent |
 | **Streaming** | Raw text streaming | Real-Time Typed SSE Event Stream (`token`, `sql`, `chart`, `diagram`, `tool_start`, `tool_end`) |
@@ -82,6 +102,26 @@ Instead of outputting raw SQL text alone, QueryMind orchestrates an end-to-end d
 | **Diagramming** | Not supported | Automatic Mermaid ER diagram & process flowchart generation |
 | **Database Support** | Single DB | Multi-Database Engine (SQLite, PostgreSQL, MySQL, MongoDB adapters) |
 | **Provider Resilience** | Single API dependency | Dual-provider support (Anthropic Claude + NVIDIA Nemotron / OpenAI failover + keyless demo mode) |
+
+---
+
+## 💾 Datasets Used in Project
+
+QueryMind comes pre-seeded with rich, real-world multi-domain datasets sourced from Kaggle (`database/seed_kaggle_data.py`), enabling complex join queries, multi-table aggregations, and deep statistical analysis:
+
+1. **Retail Orders ETL Pipeline Dataset** ([`ajmalkhann/retail-orders-dataset-etl-pipeline`](https://www.kaggle.com/datasets/ajmalkhann/retail-orders-dataset-etl-pipeline))
+   - **`customers`**: Customer profiles, demographics, cities, signup dates, and contact references.
+   - **`products`**: Product catalog detailing brand names, categories, sub-categories, and MRP.
+   - **`orders`**: Historical customer order transactions, timestamps, payment methods, order statuses, and total order amounts.
+   - **`order_items`**: Granular line-item breakdown of individual products per order, unit prices, quantities, and net amounts.
+
+2. **Online Retail II Multi-Nation Dataset** ([`lakshmi25npathi/online-retail-dataset`](https://www.kaggle.com/datasets/lakshmi25npathi/online-retail-dataset))
+   - **`online_retail_transactions`**: 50,000+ real-world international e-commerce invoice transactions capturing quantity, unit price, stock codes, country distributions, and timestamps.
+
+3. **Walmart / Retail Chain Dataset** ([`manjeetsingh/retaildataset`](https://www.kaggle.com/datasets/manjeetsingh/retaildataset))
+   - **`retail_stores`**: Department store structural metadata, store types, and physical size metrics.
+   - **`retail_sales`**: Weekly department sales figures across multi-region retail stores.
+   - **`retail_features`**: Regional economic and environmental indicators (Temperature, Fuel Price, Consumer Price Index - CPI, Unemployment Rate, and Markdown events).
 
 ---
 
@@ -177,13 +217,15 @@ Security and safety are built directly into QueryMind's database layer (`backend
 
 ---
 
-## 📊 Interactive Visualizations
+## 📊 Interactive Visualizations & Light/Dark Mode
 
-QueryMind provides a visualization workspace where users can inspect data visually and seamlessly switch between different chart formats using the dynamic chart toolbar.
+QueryMind provides a high-performance visualization workspace where users can inspect data visually and seamlessly switch between different chart formats using the dynamic chart toolbar. 
 
-### 🖼 Workspace Landing & Dataset Ingestion
-![Workspace Landing Page](./screenshots/Screenshot%202026-08-12%20225210.png)
-*QueryMind Workspace Landing Page: Interactive chat interface, live Schema Browser sidebar, and query history panel.*
+### ☀️ Light Mode & 🌙 Dark Mode Support
+The frontend was designed and prototyped using **Google Stitch Design System** (located in `frontend-ref/stitch_flux_database_intelligence/`) with full dual-theme support (**Light Mode** ☀️ and **Dark Mode** 🌙). Users can toggle themes on the fly for optimal readability across any ambient lighting condition.
+
+![Workspace Landing Page - Dark & Light Mode Support](./screenshots/Screenshot%202026-08-12%20225210.png)
+*QueryMind Workspace Landing Page: Designed in Google Stitch with seamless Light Mode ☀️ and Dark Mode 🌙 theme toggling, interactive chat interface, live Schema Browser sidebar, and query history panel.*
 
 ![Dataset Ingest Modal](./screenshots/Screenshot%202026-08-12%20225339.png)
 *Dataset Ingestion Modal: Upload local CSV/ZIP files or import directly via Kaggle code/URL.*
@@ -423,11 +465,12 @@ QueryMind incorporates advanced prompt engineering and agentic patterns (`backen
 
 ---
 
-## 🎨 UI/UX Design Philosophy
+## 🎨 UI/UX Design Philosophy & Stitch Design System
 
-QueryMind follows a modern, dark-themed UI design optimized for data density, contrast, and visual hierarchy:
+QueryMind's UI/UX was custom designed and prototyped using **Google Stitch** (`frontend-ref/stitch_flux_database_intelligence/`) — a high-fidelity design framework for database intelligence and AI applications.
 
-- **Theme Palette**: Deep dark Slate/Zinc background (`#0B0F17`) with vibrant accent highlights (Indigo, Cyan, Violet).
+- **Dual-Theme Support (Light & Dark Mode)**: Built with class-based Tailwind CSS theme switching (`light` ☀️ / `dark` 🌙), enabling crisp contrast in both dark obsidian work environments and clean light editorial environments.
+- **Theme Palette**: Deep dark Slate/Zinc background (`#0B0F17`) in dark mode, paired with clean slate neutrals (`#F8FAFC`) in light mode, accented with vibrant Indigo, Cyan, and Amber highlights.
 - **Glassmorphism & Cards**: Translucent glass-card styling for chat bubbles and tool execution traces.
 - **Density & Responsiveness**: Flexible grid layouts adjusting seamlessly across desktop and container query viewports.
 - **Micro-Interactions**: Hover states, smooth transition animations, and loading skeletons during SSE token streaming.
