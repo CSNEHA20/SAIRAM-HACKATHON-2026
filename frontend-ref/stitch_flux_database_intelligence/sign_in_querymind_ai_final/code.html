@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QueryMind - Secure Access Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#464747",
+                        "secondary-container": "#fed65b",
+                        "primary-container": "#1c1b1b",
+                        "on-tertiary-container": "#848484",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c7c7",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface-container": "#eeeeee",
+                        "outline": "#747878",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#444748",
+                        "inverse-surface": "#2f3131",
+                        "tertiary": "#000000",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "primary": "#000000",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffe088",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-secondary-container": "#745c00",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-secondary-fixed-variant": "#574500",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-primary-container": "#858383",
+                        "surface-tint": "#5f5e5e",
+                        "secondary": "#735c00",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-container": "#1b1c1c",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#e5e2e1",
+                        "surface": "#f9f9f9",
+                        "inverse-primary": "#c8c6c5",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed-variant": "#474746",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#241a00",
+                        "tertiary-fixed": "#e3e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "container-max": "1200px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "xxl": "64px",
+                        "sm": "8px",
+                        "xl": "40px"
+                    },
+                    "fontFamily": {
+                        "code-md": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "code-md": ["14px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "30px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .bg-grid-pattern {
+            background-image: 
+                linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .dark .bg-grid-pattern {
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background dark:bg-primary-container dark:text-on-primary font-body-md min-h-screen flex flex-col relative overflow-hidden transition-colors duration-300">
+<!-- Grid Background -->
+<div class="absolute inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+<!-- Theme Toggle (Top Right) -->
+<div class="absolute top-lg right-lg z-20">
+<button aria-label="Toggle Dark Mode" class="p-sm text-on-surface-variant hover:text-primary dark:text-on-tertiary-container dark:hover:text-secondary-fixed transition-colors duration-200 cursor-pointer active:opacity-80 rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary dark:focus:ring-secondary-fixed" id="theme-toggle">
+<span class="material-symbols-outlined block dark:hidden" data-icon="dark_mode">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block" data-icon="light_mode">light_mode</span>
+</button>
+</div>
+<!-- Main Content Area -->
+<main class="flex-grow flex items-center justify-center relative z-10 px-lg py-xxl w-full max-w-container-max mx-auto">
+<!-- Auth Container -->
+<div class="w-full max-w-md bg-surface-container-lowest dark:bg-tertiary-container border border-outline-variant dark:border-on-tertiary-container rounded p-xl shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-none flex flex-col gap-lg">
+<!-- Header -->
+<div class="text-center mb-md">
+<span class="material-symbols-outlined text-4xl text-primary dark:text-secondary-fixed mb-sm" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg font-bold text-primary dark:text-on-primary tracking-tight mb-xs">Secure Identity Verification</h1>
+<p class="font-code-md text-code-md text-on-surface-variant dark:text-on-tertiary-container">System Access Gateway v4.2</p>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-md">
+<!-- Operator ID Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant dark:text-on-tertiary-container" for="operator-id">Operator ID</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 transform -translate-y-1/2 text-on-surface-variant dark:text-on-tertiary-container" data-icon="badge">badge</span>
+<input class="w-full pl-xl pr-sm py-sm bg-transparent border border-outline-variant dark:border-on-tertiary-container rounded font-code-md text-code-md focus:border-primary dark:focus:border-secondary-fixed focus:ring-1 focus:ring-primary dark:focus:ring-secondary-fixed outline-none transition-colors" id="operator-id" placeholder="OP-XXXX-XXXX" type="text"/>
+</div>
+</div>
+<!-- Access Key Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant dark:text-on-tertiary-container" for="access-key">Access Key</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 transform -translate-y-1/2 text-on-surface-variant dark:text-on-tertiary-container" data-icon="key">key</span>
+<input class="w-full pl-xl pr-xl py-sm bg-transparent border border-outline-variant dark:border-on-tertiary-container rounded font-code-md text-code-md focus:border-primary dark:focus:border-secondary-fixed focus:ring-1 focus:ring-primary dark:focus:ring-secondary-fixed outline-none transition-colors" id="access-key" placeholder="••••••••••••••••" type="password"/>
+<button class="absolute right-sm top-1/2 transform -translate-y-1/2 text-on-surface-variant hover:text-primary dark:text-on-tertiary-container dark:hover:text-secondary-fixed transition-colors" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-sm mt-sm">
+<button class="w-full bg-primary text-on-primary dark:bg-secondary-fixed dark:text-on-secondary-fixed font-label-md text-label-md uppercase tracking-widest py-sm rounded flex items-center justify-center gap-sm hover:opacity-90 active:opacity-80 transition-opacity" type="submit">
+<span>Initialize Link</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="w-full bg-transparent border border-primary text-primary dark:border-secondary-fixed dark:text-secondary-fixed font-label-md text-label-md uppercase tracking-widest py-sm rounded hover:bg-surface-container dark:hover:bg-on-tertiary-fixed-variant transition-colors" type="button">
+                        Request Temporary Access
+                    </button>
+</div>
+</form>
+<!-- Divider -->
+<div class="flex items-center gap-md my-sm">
+<div class="h-px bg-outline-variant dark:bg-on-tertiary-container flex-grow"></div>
+<span class="font-label-md text-label-md uppercase text-on-surface-variant dark:text-on-tertiary-container">OR</span>
+<div class="h-px bg-outline-variant dark:bg-on-tertiary-container flex-grow"></div>
+</div>
+<!-- Biometric Bypass -->
+<button class="w-full flex items-center justify-center gap-sm p-sm border border-outline-variant dark:border-on-tertiary-container rounded hover:border-primary dark:hover:border-secondary-fixed transition-colors group cursor-pointer" type="button">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary dark:text-on-tertiary-container dark:group-hover:text-secondary-fixed transition-colors" data-icon="fingerprint" data-weight="fill" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+<span class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant group-hover:text-primary dark:text-on-tertiary-container dark:group-hover:text-secondary-fixed transition-colors">Biometric Bypass</span>
+</button>
+<!-- Technical Metadata (Decorative) -->
+<div class="mt-md text-center">
+<p class="font-code-md text-code-md text-on-surface-variant dark:text-on-tertiary-container opacity-50 text-xs">Node: ALPHA-7 | Latency: 4ms | Enc: AES-256-GCM</p>
+</div>
+</div>
+</main>
+<!-- Footer Component (Shared Component Logic - Suppressed Nav, but Footer allowed as metadata) -->
+<footer class="w-full py-sm fixed bottom-0 left-0 bg-background dark:bg-primary-container border-t border-outline-variant dark:border-on-tertiary-container flex justify-between items-center px-lg z-20">
+<div class="font-label-md text-label-md font-bold text-primary dark:text-on-primary">
+            QueryMind
+        </div>
+<div class="font-code-md text-code-md text-on-surface-variant dark:text-on-tertiary-container hidden md:block">
+            System Status: Optimal | Latency: 12ms | CPU: 14% | Throughput: 1.2GB/s
+        </div>
+<div class="flex gap-md font-code-md text-code-md">
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-secondary-fixed opacity-90 hover:opacity-100 transition-colors" href="#">Privacy</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-secondary-fixed opacity-90 hover:opacity-100 transition-colors" href="#">Terms</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-secondary-fixed opacity-90 hover:opacity-100 transition-colors hidden sm:block" href="#">API Docs</a>
+</div>
+</footer>
+<script>
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            htmlElement.classList.toggle('light');
+        });
+    </script>
+</body></html>

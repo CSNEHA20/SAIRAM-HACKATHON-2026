@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QueryMind - Query Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed-variant": "#464747",
+                      "secondary-container": "#fed65b",
+                      "primary-container": "#1c1b1b",
+                      "on-tertiary-container": "#848484",
+                      "on-primary": "#ffffff",
+                      "outline-variant": "#c4c7c7",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "surface-container": "#eeeeee",
+                      "outline": "#747878",
+                      "on-error": "#ffffff",
+                      "on-surface-variant": "#444748",
+                      "inverse-surface": "#2f3131",
+                      "tertiary": "#000000",
+                      "error-container": "#ffdad6",
+                      "surface-container-highest": "#e2e2e2",
+                      "surface-container-low": "#f3f3f3",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed-dim": "#c8c6c5",
+                      "primary": "#000000",
+                      "background": "#f9f9f9",
+                      "on-background": "#1a1c1c",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#ffe088",
+                      "secondary-fixed-dim": "#e9c349",
+                      "on-secondary-container": "#745c00",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-secondary-fixed-variant": "#574500",
+                      "on-primary-fixed": "#1c1b1b",
+                      "on-primary-container": "#858383",
+                      "surface-tint": "#5f5e5e",
+                      "secondary": "#735c00",
+                      "surface-bright": "#f9f9f9",
+                      "tertiary-fixed-dim": "#c7c6c6",
+                      "error": "#ba1a1a",
+                      "surface-container-high": "#e8e8e8",
+                      "surface-variant": "#e2e2e2",
+                      "tertiary-container": "#1b1c1c",
+                      "surface-dim": "#dadada",
+                      "on-error-container": "#93000a",
+                      "primary-fixed": "#e5e2e1",
+                      "surface": "#f9f9f9",
+                      "inverse-primary": "#c8c6c5",
+                      "on-surface": "#1a1c1c",
+                      "on-primary-fixed-variant": "#474746",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#241a00",
+                      "tertiary-fixed": "#e3e2e2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "container-max": "1200px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "xxl": "64px",
+                      "sm": "8px",
+                      "xl": "40px"
+              },
+              "fontFamily": {
+                      "code-md": [
+                              "jetbrainsMono"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-xl": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "30px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.015em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "36px",
+                              {
+                                      "lineHeight": "42px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "26px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #0d0d0d;
+            color: #e5e5e5;
+        }
+        .code-block {
+            background-color: #111111;
+            border: 1px solid #333333;
+        }
+        .syntax-keyword { color: #fed65b; }
+        .syntax-string { color: #848484; }
+        .syntax-function { color: #e5e5e5; }
+        
+        /* Custom Scrollbar for dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1c1b1b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #464747; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #848484; 
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-body-md text-body-md antialiased selection:bg-secondary-fixed selection:text-tertiary">
+<!-- SideNavBar -->
+<nav class="bg-primary-container h-screen w-64 fixed left-0 top-0 border-r border-on-tertiary-container flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-lg text-headline-lg font-bold text-secondary-fixed tracking-tight">QueryMind</h1>
+<p class="font-label-md text-label-md text-on-tertiary-container uppercase tracking-widest mt-xs">Enterprise Intelligence</p>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-sm px-sm">
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary-fixed font-bold border-l-4 border-secondary-fixed bg-tertiary-container transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="font-label-md text-label-md uppercase tracking-widest">Workspace</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-tertiary-container hover:bg-on-tertiary-fixed-variant transition-all duration-200 ease-in-out border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">schema</span>
+<span class="font-label-md text-label-md uppercase tracking-widest">Architecture</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-tertiary-container hover:bg-on-tertiary-fixed-variant transition-all duration-200 ease-in-out border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-label-md text-label-md uppercase tracking-widest">Intelligence</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-tertiary-container hover:bg-on-tertiary-fixed-variant transition-all duration-200 ease-in-out border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md uppercase tracking-widest">Telemetry</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-tertiary-container hover:bg-on-tertiary-fixed-variant transition-all duration-200 ease-in-out border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="font-label-md text-label-md uppercase tracking-widest">Security</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="px-lg mt-auto pt-md border-t border-on-tertiary-container">
+<div class="flex items-center gap-sm">
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-on-tertiary-container object-cover" data-alt="A small, circular avatar portrait of a professional analyst in a high-tech corporate environment, dimly lit with subtle amber backlighting against a dark grey background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGhu5EgaB_t06lUvDGRADI6UcAMrOYuFW0TefTolwmZZnsnaxql-LfmF3ecTZE05OSuRtw1Go_XUeV0220L-AJ6OprOW3pvCGQL42wr46rXTE7E0q5HCx38jGbn7IMkBchTJ5i5fP3DRWBU3s4ck8apRXQl-i9qbAd7RuR7U8ReONJwYGB_SEKg8tkwQSTZBlHoExhjKA-30uibWvXF0fXld9iFBdnFFc83QIOGU4V9VSIMaONDUIybw"/>
+<div>
+<p class="font-label-md text-label-md text-on-primary">Analyst</p>
+<p class="font-body-sm text-body-sm text-on-tertiary-container">Data Science Team</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col h-full bg-[#0d0d0d] relative">
+<!-- Header -->
+<header class="h-16 border-b border-on-tertiary-container flex items-center justify-between px-lg flex-shrink-0 bg-primary-container bg-opacity-80 backdrop-blur-sm z-40">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-secondary-fixed">model_training</span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-on-primary">Session: Customer Churn Analysis</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs px-sm py-xs bg-tertiary-container border border-on-tertiary-container rounded-DEFAULT">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span>
+<span class="font-code-md text-code-md text-on-tertiary-container">GPT-4-Turbo</span>
+</div>
+<button class="text-on-tertiary-container hover:text-secondary-fixed transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Workspace Split -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Chat / Editor Area -->
+<div class="flex-1 flex flex-col relative">
+<!-- Conversation Log -->
+<div class="flex-1 overflow-y-auto p-lg space-y-xl pb-32">
+<!-- User Message -->
+<div class="flex flex-col items-end w-full pl-xl">
+<div class="flex items-center gap-sm mb-xs text-on-tertiary-container">
+<span class="font-label-md text-label-md">Analyst</span>
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+<div class="bg-primary-container border border-on-tertiary-container rounded-lg p-md max-w-3xl">
+<p class="font-body-md text-body-md text-on-primary">
+                                We need to identify high-risk customers based on recent usage drops. Can you generate a query to find users whose activity in the `usage_logs` table has dropped by more than 50% in the last 30 days compared to the previous 30 days?
+                            </p>
+</div>
+</div>
+<!-- System Message -->
+<div class="flex flex-col items-start w-full pr-xl">
+<div class="flex items-center gap-sm mb-xs text-secondary-fixed">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-md text-label-md">QueryMind</span>
+</div>
+<div class="w-full max-w-4xl">
+<p class="font-body-md text-body-md text-on-primary mb-md">
+                                Certainly. I have formulated a PostgreSQL query to calculate the usage drop for each customer. It uses Common Table Expressions (CTEs) to separate the current 30-day period from the preceding 30-day period.
+                            </p>
+<div class="code-block rounded-lg overflow-hidden">
+<div class="flex items-center justify-between px-md py-sm border-b border-[#333333] bg-[#0a0a0a]">
+<span class="font-code-md text-code-md text-on-tertiary-container text-xs">PostgreSQL</span>
+<button class="text-on-tertiary-container hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+</button>
+</div>
+<pre class="p-md font-code-md text-code-md overflow-x-auto"><code><span class="syntax-keyword">WITH</span> current_period <span class="syntax-keyword">AS</span> (
+    <span class="syntax-keyword">SELECT</span> customer_id, <span class="syntax-function">COUNT</span>(*) <span class="syntax-keyword">as</span> current_usage
+    <span class="syntax-keyword">FROM</span> usage_logs
+    <span class="syntax-keyword">WHERE</span> event_date &gt;= <span class="syntax-keyword">CURRENT_DATE</span> - <span class="syntax-keyword">INTERVAL</span> <span class="syntax-string">'30 days'</span>
+    <span class="syntax-keyword">GROUP BY</span> customer_id
+),
+previous_period <span class="syntax-keyword">AS</span> (
+    <span class="syntax-keyword">SELECT</span> customer_id, <span class="syntax-function">COUNT</span>(*) <span class="syntax-keyword">as</span> previous_usage
+    <span class="syntax-keyword">FROM</span> usage_logs
+    <span class="syntax-keyword">WHERE</span> event_date &gt;= <span class="syntax-keyword">CURRENT_DATE</span> - <span class="syntax-keyword">INTERVAL</span> <span class="syntax-string">'60 days'</span>
+      <span class="syntax-keyword">AND</span> event_date &lt; <span class="syntax-keyword">CURRENT_DATE</span> - <span class="syntax-keyword">INTERVAL</span> <span class="syntax-string">'30 days'</span>
+    <span class="syntax-keyword">GROUP BY</span> customer_id
+)
+<span class="syntax-keyword">SELECT</span> 
+    p.customer_id,
+    p.previous_usage,
+    <span class="syntax-function">COALESCE</span>(c.current_usage, 0) <span class="syntax-keyword">as</span> current_usage,
+    <span class="syntax-function">ROUND</span>((1.0 - (<span class="syntax-function">COALESCE</span>(c.current_usage, 0)::numeric / p.previous_usage)) * 100, 2) <span class="syntax-keyword">as</span> drop_percentage
+<span class="syntax-keyword">FROM</span> previous_period p
+<span class="syntax-keyword">LEFT JOIN</span> current_period c <span class="syntax-keyword">ON</span> p.customer_id = c.customer_id
+<span class="syntax-keyword">WHERE</span> p.previous_usage &gt; 10 
+  <span class="syntax-keyword">AND</span> (<span class="syntax-function">COALESCE</span>(c.current_usage, 0)::numeric / p.previous_usage) &lt; 0.5
+<span class="syntax-keyword">ORDER BY</span> drop_percentage <span class="syntax-keyword">DESC</span>;</code></pre>
+</div>
+<p class="font-body-sm text-body-sm text-on-tertiary-container mt-sm">
+                                Note: I added a condition `p.previous_usage &gt; 10` to filter out noise from customers who had very low baseline usage.
+                            </p>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="absolute bottom-0 left-0 right-0 p-lg bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d] to-transparent pt-xl">
+<div class="bg-primary-container border border-on-tertiary-container rounded-lg focus-within:border-secondary-fixed transition-colors relative shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+<textarea class="w-full bg-transparent border-none text-on-primary font-body-md text-body-md p-md pr-16 resize-none focus:ring-0 placeholder:text-on-tertiary-container" placeholder="Describe your query or ask a question about the schema..." rows="2"></textarea>
+<button class="absolute right-sm bottom-sm p-sm bg-[#1a1a1a] border border-on-tertiary-container text-on-primary rounded hover:border-secondary-fixed hover:text-secondary-fixed transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-sm px-sm">
+<span class="font-label-md text-label-md text-on-tertiary-container">Press <kbd class="font-code-md text-xs bg-tertiary-container border border-on-tertiary-container px-1 rounded">Enter</kbd> to execute, <kbd class="font-code-md text-xs bg-tertiary-container border border-on-tertiary-container px-1 rounded">Shift</kbd> + <kbd class="font-code-md text-xs bg-tertiary-container border border-on-tertiary-container px-1 rounded">Enter</kbd> for newline</span>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Context & Telemetry -->
+<aside class="w-80 border-l border-on-tertiary-container bg-primary-container flex flex-col h-full overflow-y-auto">
+<!-- Active Schema Context -->
+<div class="p-lg border-b border-on-tertiary-container">
+<h3 class="font-label-md text-label-md text-on-tertiary-container uppercase tracking-widest mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">database</span>
+                        Active Schema Context
+                    </h3>
+<ul class="space-y-sm">
+<li class="bg-[#111111] border border-[#333333] rounded p-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm mt-xs">table_chart</span>
+<div>
+<p class="font-code-md text-code-md text-secondary-fixed text-sm">usage_logs</p>
+<p class="font-body-sm text-body-sm text-on-tertiary-container text-xs mt-1">14.2M rows • Last updated 2m ago</p>
+</div>
+</li>
+<li class="bg-[#111111] border border-[#333333] rounded p-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm mt-xs">table_chart</span>
+<div>
+<p class="font-code-md text-code-md text-on-primary text-sm">billing_events</p>
+<p class="font-body-sm text-body-sm text-on-tertiary-container text-xs mt-1">2.1M rows • Last updated 5m ago</p>
+</div>
+</li>
+<li class="bg-[#111111] border border-[#333333] rounded p-sm flex items-start gap-sm">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm mt-xs">table_chart</span>
+<div>
+<p class="font-code-md text-code-md text-on-primary text-sm">customer_profiles</p>
+<p class="font-body-sm text-body-sm text-on-tertiary-container text-xs mt-1">450K rows • Last updated 1h ago</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- System Telemetry -->
+<div class="p-lg">
+<h3 class="font-label-md text-label-md text-on-tertiary-container uppercase tracking-widest mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">speed</span>
+                        System Telemetry
+                    </h3>
+<div class="grid grid-cols-2 gap-sm mb-md">
+<div class="bg-[#111111] border border-[#333333] rounded p-sm">
+<p class="font-label-md text-label-md text-on-tertiary-container mb-xs">Query Latency</p>
+<p class="font-headline-lg text-headline-lg text-on-primary font-bold">42<span class="text-sm font-normal text-on-tertiary-container">ms</span></p>
+</div>
+<div class="bg-[#111111] border border-[#333333] rounded p-sm">
+<p class="font-label-md text-label-md text-on-tertiary-container mb-xs">Active Conns</p>
+<p class="font-headline-lg text-headline-lg text-secondary-fixed font-bold">1,024</p>
+</div>
+</div>
+<!-- Compute Load Chart Mockup -->
+<div class="bg-[#111111] border border-[#333333] rounded p-sm">
+<p class="font-label-md text-label-md text-on-tertiary-container mb-sm">Compute Load</p>
+<div class="flex items-end gap-1 h-16 w-full">
+<div class="w-full bg-[#333333] rounded-t" style="height: 30%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 45%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 60%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 40%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 75%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 50%"></div>
+<div class="w-full bg-secondary-fixed rounded-t" style="height: 85%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 65%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 40%"></div>
+<div class="w-full bg-[#333333] rounded-t" style="height: 55%"></div>
+</div>
+<div class="flex justify-between mt-1 text-xs text-on-tertiary-container font-code-md">
+<span>-10m</span>
+<span>Now</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-primary-container border-t border-on-tertiary-container w-full py-sm fixed bottom-0 left-0 z-50 flex justify-between items-center px-lg pl-[280px]">
+<div class="flex items-center gap-md">
+<span class="font-label-md text-label-md font-bold text-on-primary">QueryMind</span>
+<span class="font-code-md text-code-md text-on-tertiary-container text-xs">System Status: Optimal | Latency: 12ms | CPU: 14% | Throughput: 1.2GB/s</span>
+</div>
+<div class="flex gap-md">
+<a class="font-code-md text-code-md text-on-tertiary-container hover:text-secondary-fixed opacity-90 hover:opacity-100 text-xs transition-colors" href="#">Privacy</a>
+<a class="font-code-md text-code-md text-on-tertiary-container hover:text-secondary-fixed opacity-90 hover:opacity-100 text-xs transition-colors" href="#">Terms</a>
+<a class="font-code-md text-code-md text-on-tertiary-container hover:text-secondary-fixed opacity-90 hover:opacity-100 text-xs transition-colors" href="#">API Docs</a>
+</div>
+</footer>
+</body></html>

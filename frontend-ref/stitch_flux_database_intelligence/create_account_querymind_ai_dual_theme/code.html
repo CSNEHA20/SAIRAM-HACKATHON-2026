@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QueryMind - Establish New Node</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-primary": "#c8c6c5",
+                      "on-secondary": "#ffffff",
+                      "primary": "#000000",
+                      "tertiary-container": "#1b1c1c",
+                      "on-surface-variant": "#444748",
+                      "on-primary-fixed-variant": "#474746",
+                      "outline-variant": "#c4c7c7",
+                      "tertiary": "#000000",
+                      "secondary-fixed": "#ffe088",
+                      "inverse-surface": "#2f3131",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed-dim": "#c8c6c5",
+                      "primary-container": "#1c1b1b",
+                      "surface-container-highest": "#e2e2e2",
+                      "inverse-on-surface": "#f1f1f1",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#464747",
+                      "surface-variant": "#e2e2e2",
+                      "on-primary-fixed": "#1c1b1b",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#c7c6c6",
+                      "on-surface": "#1a1c1c",
+                      "secondary-container": "#fed65b",
+                      "on-secondary-fixed-variant": "#574500",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "outline": "#747878",
+                      "surface-container": "#eeeeee",
+                      "surface": "#f9f9f9",
+                      "error-container": "#ffdad6",
+                      "surface-container-low": "#f3f3f3",
+                      "surface-tint": "#5f5e5e",
+                      "primary-fixed": "#e5e2e1",
+                      "error": "#ba1a1a",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-container": "#745c00",
+                      "on-primary-container": "#858383",
+                      "secondary": "#735c00",
+                      "on-background": "#1a1c1c",
+                      "surface-dim": "#dadada",
+                      "on-tertiary-container": "#848484",
+                      "secondary-fixed-dim": "#e9c349",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f9f9f9",
+                      "tertiary-fixed": "#e3e2e2",
+                      "surface-container-high": "#e8e8e8",
+                      "background": "#f9f9f9",
+                      "on-secondary-fixed": "#241a00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xl": "40px",
+                      "lg": "24px",
+                      "xs": "4px",
+                      "container-max": "1200px",
+                      "xxl": "64px",
+                      "sm": "8px",
+                      "unit": "4px",
+                      "md": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "code-md": [
+                              "jetbrainsMono"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-xl": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "30px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "26px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.015em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "36px",
+                              {
+                                      "lineHeight": "42px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .carbon-border:focus-within {
+            border-color: #1A1A1A;
+        }
+        .bg-grid {
+            background-size: 24px 24px;
+            background-image: linear-gradient(to right, #E5E5E5 1px, transparent 1px),
+                              linear-gradient(to bottom, #E5E5E5 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md antialiased bg-grid relative overflow-x-hidden">
+<!-- Minimal Header -->
+<header class="w-full h-16 flex justify-between items-center px-lg md:px-xl z-50 bg-surface/90 backdrop-blur-sm border-b border-outline-variant sticky top-0">
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tight">QueryMind</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200" id="themeToggle">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">light_mode</span>
+</button>
+</header>
+<main class="flex-grow flex items-center justify-center py-xl px-lg relative">
+<!-- Abstract Decoration -->
+<div class="absolute top-1/4 left-0 w-full h-px bg-outline-variant opacity-50 -z-10"></div>
+<div class="absolute top-0 left-1/4 w-px h-full bg-outline-variant opacity-50 -z-10"></div>
+<div class="w-full max-w-lg bg-surface-container-lowest border border-outline-variant p-xl shadow-sm rounded-none relative">
+<!-- Decorative corners -->
+<div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary -translate-x-[1px] -translate-y-[1px]"></div>
+<div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary translate-x-[1px] -translate-y-[1px]"></div>
+<div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary -translate-x-[1px] translate-y-[1px]"></div>
+<div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary translate-x-[1px] translate-y-[1px]"></div>
+<div class="mb-lg text-center">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-xs">Establish New Node</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Initialize your secure connection to the precision engine.</p>
+</div>
+<form action="#" class="space-y-lg">
+<!-- Full Name -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface uppercase mb-xs tracking-wider" for="fullName">Full Name</label>
+<div class="relative carbon-border border border-outline-variant bg-surface-bright transition-colors duration-200">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">person</span>
+<input class="w-full bg-transparent border-none py-sm pl-xl pr-sm text-on-surface font-body-md focus:ring-0 placeholder:text-on-surface-variant/50" id="fullName" name="fullName" placeholder="Jane Doe" type="text"/>
+</div>
+</div>
+<!-- Professional Email -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface uppercase mb-xs tracking-wider" for="email">Professional Email</label>
+<div class="relative carbon-border border border-outline-variant bg-surface-bright transition-colors duration-200">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">mail</span>
+<input class="w-full bg-transparent border-none py-sm pl-xl pr-sm text-on-surface font-body-md focus:ring-0 placeholder:text-on-surface-variant/50" id="email" name="email" placeholder="jane.doe@organization.com" type="email"/>
+</div>
+</div>
+<!-- Organization -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface uppercase mb-xs tracking-wider" for="organization">Organization</label>
+<div class="relative carbon-border border border-outline-variant bg-surface-bright transition-colors duration-200">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">domain</span>
+<input class="w-full bg-transparent border-none py-sm pl-xl pr-sm text-on-surface font-body-md focus:ring-0 placeholder:text-on-surface-variant/50" id="organization" name="organization" placeholder="Acme Corp" type="text"/>
+</div>
+</div>
+<!-- Master Access Key -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface uppercase mb-xs tracking-wider" for="accessKey">Master Access Key</label>
+<div class="relative carbon-border border border-outline-variant bg-surface-bright transition-colors duration-200">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">key</span>
+<input class="w-full bg-transparent border-none py-sm pl-xl pr-xl text-on-surface font-body-md focus:ring-0 placeholder:text-on-surface-variant/50" id="accessKey" name="accessKey" placeholder="••••••••••••" type="password"/>
+<button class="absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-body-lg" style="font-variation-settings: 'FILL' 0;">visibility</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs text-right">Must be at least 16 characters.</p>
+</div>
+<div class="pt-sm">
+<button class="w-full bg-[#1A1A1A] text-white py-md px-lg font-label-md text-label-md uppercase tracking-wider hover:bg-black transition-colors duration-200 flex items-center justify-center gap-sm" type="submit">
+                        Provision Account
+                        <span class="material-symbols-outlined text-body-sm" style="font-variation-settings: 'FILL' 1;">arrow_forward</span>
+</button>
+</div>
+<div class="text-center font-body-sm text-body-sm text-on-surface-variant pt-lg border-t border-outline-variant">
+                    By proceeding, you acknowledge our <a class="text-primary underline hover:opacity-80 transition-opacity" href="#">Terms of Protocol</a> and <a class="text-primary underline hover:opacity-80 transition-opacity" href="#">Privacy Matrix</a>.
+                </div>
+</form>
+</div>
+</main>
+<footer class="w-full py-lg px-xl border-t border-outline-variant bg-surface-container-lowest text-center">
+<p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 QueryMind AI. Built for precision.</p>
+</footer>
+<script>
+        // Minimal script for theme toggle interaction demonstration (visual only in this context)
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const icon = this.querySelector('.material-symbols-outlined');
+            if (icon.innerText === 'light_mode') {
+                icon.innerText = 'dark_mode';
+            } else {
+                icon.innerText = 'light_mode';
+            }
+        });
+    </script>
+</body></html>

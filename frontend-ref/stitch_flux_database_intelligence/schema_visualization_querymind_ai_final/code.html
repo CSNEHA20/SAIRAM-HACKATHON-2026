@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QueryMind - Architecture</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#464747",
+                        "secondary-container": "#fed65b",
+                        "primary-container": "#1c1b1b",
+                        "on-tertiary-container": "#848484",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c7c7",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface-container": "#eeeeee",
+                        "outline": "#747878",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#444748",
+                        "inverse-surface": "#2f3131",
+                        "tertiary": "#000000",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "primary": "#000000",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffe088",
+                        "secondary-fixed-dim": "#e9c349",
+                        "on-secondary-container": "#745c00",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-secondary-fixed-variant": "#574500",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-primary-container": "#858383",
+                        "surface-tint": "#5f5e5e",
+                        "secondary": "#735c00",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-container": "#1b1c1c",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#e5e2e1",
+                        "surface": "#f9f9f9",
+                        "inverse-primary": "#c8c6c5",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed-variant": "#474746",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#241a00",
+                        "tertiary-fixed": "#e3e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "container-max": "1200px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "xxl": "64px",
+                        "sm": "8px",
+                        "xl": "40px"
+                    },
+                    "fontFamily": {
+                        "code-md": ["jetbrainsMono"],
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "code-md": ["14px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "30px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .table-node {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .table-node:hover {
+            transform: translateY(-2px);
+            border-color: #1a1a1a;
+        }
+        .connection-line {
+            stroke: #c4c7c7;
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased overflow-hidden flex h-screen">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 border-r border-outline-variant bg-surface-container-low flex flex-col py-md z-20">
+<div class="px-md mb-xl">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">QueryMind</h1>
+<p class="font-label-md text-label-md text-on-surface-variant mt-xs">Enterprise Intelligence</p>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-sm px-sm">
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container transition-all duration-200 ease-in-out font-label-md text-label-md uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+                        Workspace
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-primary font-bold border-l-4 border-primary bg-surface-container-high transition-all duration-200 ease-in-out font-label-md text-label-md uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="schema">schema</span>
+                        Architecture
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container transition-all duration-200 ease-in-out font-label-md text-label-md uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+                        Intelligence
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container transition-all duration-200 ease-in-out font-label-md text-label-md uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                        Telemetry
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container transition-all duration-200 ease-in-out font-label-md text-label-md uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+                        Security
+                    </a>
+</li>
+</ul>
+</div>
+<div class="px-md mt-auto pt-md border-t border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A small, professional headshot of an individual, suitable for a user profile avatar in a technical dashboard. The lighting is soft and neutral, ensuring clear visibility. The background is a simple, unobtrusive gradient." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE0rAw9TJvn1ARMY2Y-w6qeN3pbPBKi3-gbvN6ALPe5zvEOAJeZa-IaOrFKi2W9cO2TGo9ArYaEhQseFawNlxAuXTJl9zZ0mXTtzsE4HGFFGLP8RDRTmcRVsdf6Fcal4OXjpfgTMLjChpvjoHggIQmyoXS6bmk8nSvo-zUwAizI30fS8soz7qoKFzm_lhg6UMdbstcEMm5WHJ7vyYjdNXB8BN68KoZThdTO2OjRKryNAhOny3iswZrdA"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Data Eng</p>
+<p class="font-label-md text-label-md text-on-surface-variant" style="font-size: 10px;">Admin</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col relative h-screen">
+<!-- Top Action Bar -->
+<header class="h-16 border-b border-outline-variant bg-background flex items-center justify-between px-lg z-10 shrink-0">
+<div class="flex items-center gap-md">
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">Schema Architecture</h2>
+<div class="h-6 w-px bg-outline-variant mx-sm"></div>
+<div class="flex bg-surface-container-low rounded-DEFAULT p-xs border border-outline-variant">
+<button class="px-md py-xs font-label-md text-label-md bg-surface-container-highest text-primary rounded-sm shadow-sm transition-colors">Logical</button>
+<button class="px-md py-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors">Physical</button>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button aria-label="Toggle Theme" class="text-on-surface-variant hover:text-primary transition-colors" id="theme-toggle">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-md py-sm rounded-DEFAULT flex items-center gap-xs hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                    New Analysis
+                </button>
+</div>
+</header>
+<!-- Canvas & Sidebar Container -->
+<div class="flex-1 flex overflow-hidden relative">
+<!-- Interactive Canvas -->
+<div class="flex-1 bg-[#F5F5F5] relative overflow-auto cursor-grab active:cursor-grabbing p-lg" id="canvas-area">
+<!-- Grid Background -->
+<div class="absolute inset-0 z-0 pointer-events-none" style="background-image: radial-gradient(#e5e5e5 1px, transparent 1px); background-size: 24px 24px;"></div>
+<!-- SVG Lines for Connections -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
+<path class="connection-line" d="M 300,200 C 450,200 450,400 600,400"></path>
+</svg>
+<!-- Nodes Container -->
+<div class="relative z-10 w-full h-full min-w-[1200px] min-h-[800px]">
+<!-- Table Node 1: tbl_user_profile -->
+<div class="absolute top-[100px] left-[50px] w-[250px] bg-white border border-outline-variant rounded-DEFAULT table-node">
+<div class="bg-surface-container-low border-b border-outline-variant px-md py-sm rounded-t-DEFAULT flex justify-between items-center cursor-pointer">
+<span class="font-code-md text-code-md font-bold text-primary">tbl_user_profile</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="key">key</span>
+</div>
+<div class="p-sm">
+<ul class="space-y-xs font-code-md text-code-md text-sm">
+<li class="flex justify-between items-center group">
+<span class="text-primary font-bold">id</span>
+<span class="text-on-surface-variant text-[12px] group-hover:text-primary transition-colors">UUID <span class="text-secondary">PK</span></span>
+</li>
+<li class="flex justify-between items-center group">
+<span class="text-on-surface-variant">email</span>
+<span class="text-on-surface-variant text-[12px] group-hover:text-primary transition-colors">VARCHAR(255)</span>
+</li>
+<li class="flex justify-between items-center group">
+<span class="text-on-surface-variant">created_at</span>
+<span class="text-on-surface-variant text-[12px] group-hover:text-primary transition-colors">TIMESTAMP</span>
+</li>
+<li class="flex justify-between items-center group">
+<span class="text-on-surface-variant">status</span>
+<span class="text-on-surface-variant text-[12px] group-hover:text-primary transition-colors">ENUM</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Table Node 2: tbl_session_state -->
+<div class="absolute top-[300px] left-[600px] w-[250px] bg-white border border-primary rounded-DEFAULT table-node">
+<div class="bg-surface-container-low border-b border-primary px-md py-sm rounded-t-DEFAULT flex justify-between items-center cursor-pointer">
+<span class="font-code-md text-code-md font-bold text-primary">tbl_session_state</span>
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="memory">memory</span>
+</div>
+<div class="p-sm">
+<ul class="space-y-xs font-code-md text-code-md text-sm">
+<li class="flex justify-between items-center group">
+<span class="text-primary font-bold">session_id</span>
+<span class="text-on-surface-variant text-[12px] group-hover:text-primary transition-colors">UUID <span class="text-secondary">PK</span></span>
+</li>
+<li class="flex justify-between items-center group bg-surface-container-low -mx-sm px-sm py-[2px]">
+<span class="text-primary">user_id</span>
+<span class="text-primary font-bold text-[12px]">UUID <span class="text-outline">FK</span></span>
+</li>
+<li class="flex justify-between items-center group">
+<span class="text-on-surface-variant">last_active</span>
+<span class="text-on-surface-variant text-[12px] group-hover:text-primary transition-colors">TIMESTAMP</span>
+</li>
+<li class="flex justify-between items-center group">
+<span class="text-on-surface-variant">payload</span>
+<span class="text-on-surface-variant text-[12px] group-hover:text-primary transition-colors">JSONB</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Entity Context -->
+<aside class="w-[320px] bg-white border-l border-outline-variant flex flex-col shrink-0 overflow-y-auto">
+<div class="p-lg border-b border-outline-variant">
+<div class="flex items-center gap-sm mb-xs">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest bg-surface-container px-xs py-[2px] rounded-sm">Table</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest bg-surface-container px-xs py-[2px] rounded-sm">Transactional</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold text-primary font-code-md break-all">tbl_session_state</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm">Maintains active user sessions and ephemeral state data for application context.</p>
+</div>
+<div class="p-lg flex-1">
+<h4 class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant mb-md border-b border-outline-variant pb-xs">Properties</h4>
+<div class="space-y-md">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block mb-xs">Estimated Row Count</span>
+<span class="font-code-md text-code-md text-primary">14.2M</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block mb-xs">Storage Size</span>
+<span class="font-code-md text-code-md text-primary">4.8 GB</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block mb-xs">Last Vacuum</span>
+<span class="font-code-md text-code-md text-primary">2023-10-27 14:00 UTC</span>
+</div>
+</div>
+<h4 class="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant mt-xl mb-md border-b border-outline-variant pb-xs">Foreign Keys</h4>
+<div class="bg-surface-container-low border border-outline-variant rounded-DEFAULT p-sm">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-code-md text-code-md text-primary text-sm font-bold">user_id</span>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="arrow_forward">arrow_forward</span>
+</div>
+<div class="text-on-surface-variant font-code-md text-code-md text-sm">
+                            tbl_user_profile(id)
+                        </div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-sm fixed bottom-0 left-0 border-t border-outline-variant bg-background flex justify-between items-center px-lg z-30 font-code-md text-code-md pl-[280px]">
+<div class="text-on-surface-variant">
+            System Status: <span class="text-[#008000]">Optimal</span> | Latency: 12ms | CPU: 14% | Throughput: 1.2GB/s
+        </div>
+<div class="flex gap-md">
+<a class="text-on-surface-variant hover:text-primary opacity-90 hover:opacity-100 transition-colors" href="#">Privacy</a>
+<a class="text-on-surface-variant hover:text-primary opacity-90 hover:opacity-100 transition-colors" href="#">Terms</a>
+<a class="text-on-surface-variant hover:text-primary opacity-90 hover:opacity-100 transition-colors" href="#">API Docs</a>
+</div>
+</footer>
+<script>
+        // Simple dark mode toggle visual indication (actual logic would require more setup based on config)
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            const icon = this.querySelector('.material-symbols-outlined');
+            if(document.documentElement.classList.contains('dark')) {
+                icon.textContent = 'light_mode';
+            } else {
+                icon.textContent = 'dark_mode';
+            }
+        });
+    </script>
+</body></html>

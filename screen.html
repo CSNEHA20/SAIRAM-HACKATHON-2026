@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QueryMind AI - Analytical Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Playfair+Display:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed-variant": "#574500",
+                      "surface-variant": "#e2e2e2",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#e9c349",
+                      "tertiary-container": "#1b1c1c",
+                      "on-secondary-fixed": "#241a00",
+                      "tertiary-fixed": "#e3e2e2",
+                      "inverse-surface": "#2f3131",
+                      "error-container": "#ffdad6",
+                      "outline-variant": "#c4c7c7",
+                      "primary-fixed-dim": "#c8c6c5",
+                      "on-tertiary-fixed-variant": "#464747",
+                      "primary": "#000000",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-container": "#1c1b1b",
+                      "inverse-primary": "#c8c6c5",
+                      "background": "#f9f9f9",
+                      "secondary": "#735c00",
+                      "outline": "#747878",
+                      "on-primary-fixed-variant": "#474746",
+                      "surface-dim": "#dadada",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#858383",
+                      "on-tertiary-container": "#848484",
+                      "surface-container-low": "#f3f3f3",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#f9f9f9",
+                      "surface-container": "#eeeeee",
+                      "on-primary-fixed": "#1c1b1b",
+                      "on-background": "#1a1c1c",
+                      "on-surface": "#1a1c1c",
+                      "surface": "#f9f9f9",
+                      "inverse-on-surface": "#f1f1f1",
+                      "tertiary-fixed-dim": "#c7c6c6",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#5f5e5e",
+                      "surface-container-high": "#e8e8e8",
+                      "secondary-fixed": "#ffe088",
+                      "on-surface-variant": "#444748",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "secondary-container": "#fed65b",
+                      "surface-container-highest": "#e2e2e2",
+                      "primary-fixed": "#e5e2e1",
+                      "tertiary": "#000000",
+                      "on-secondary-container": "#745c00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xxl": "64px",
+                      "container-max": "1200px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "md": "16px",
+                      "xl": "40px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Playfair Display", "serif"
+                      ],
+                      "display-lg-mobile": [
+                              "Playfair Display", "serif"
+                      ],
+                      "body-md": [
+                              "Inter", "sans-serif"
+                      ],
+                      "label-md": [
+                              "Inter", "sans-serif"
+                      ],
+                      "body-lg": [
+                              "Inter", "sans-serif"
+                      ],
+                      "headline-xl": [
+                              "Playfair Display", "serif"
+                      ],
+                      "display-lg": [
+                              "Playfair Display", "serif"
+                      ],
+                      "body-sm": [
+                              "Inter", "sans-serif"
+                      ],
+                      "code-md": [
+                              "JetBrains Mono", "monospace"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "36px",
+                              {
+                                      "lineHeight": "42px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "26px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "30px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.015em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        /* Base overrides for "dark" theme simulation based on prompt requirements, 
+           even though JSON says light mode, the prompt asks for Obsidian/Amber/Gold 
+           and we are forcing dark class on HTML to adhere to JSON's dark variants where available,
+           but overriding background to be truly dark as requested by prompt. */
+        
+        .code-bg {
+            background-color: #f3f3f3;
+        }
+        .dark .code-bg {
+            background-color: #111111;
+        }
+        
+        /* Custom scrollbar for a sleek look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c4c7c7;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #2f3131;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #747878;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #464747;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-body-md text-body-md bg-background dark:bg-[#0d0d0d] text-on-surface dark:text-[#e2e2e2] selection:bg-secondary-container selection:text-on-secondary-container overflow-hidden transition-colors duration-300">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-[#0d0d0d] font-headline-lg text-headline-lg docked full-width top-0 border-b border-outline-variant dark:border-[#2f3131] flat no shadows z-50 transition-colors duration-300">
+<div class="flex justify-between items-center w-full px-gutter h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-secondary dark:text-secondary-fixed">schema</span>
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed">QueryMind AI</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex items-center bg-surface-container-low dark:bg-[#1b1c1c] rounded px-md py-sm border border-outline-variant dark:border-[#2f3131] transition-colors duration-300">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-on-tertiary-container mr-sm text-[18px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm text-on-surface dark:text-tertiary-fixed w-64 placeholder-on-surface-variant dark:placeholder-on-tertiary-container p-0" placeholder="Search knowledge graph..." type="text"/>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 flex items-center justify-center p-sm rounded hover:bg-surface-container dark:hover:bg-[#1b1c1c]" id="theme-toggle">
+<span class="material-symbols-outlined dark:hidden">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block">light_mode</span>
+</button>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 flex items-center justify-center p-sm rounded hover:bg-surface-container dark:hover:bg-[#1b1c1c]">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 flex items-center justify-center p-sm rounded hover:bg-surface-container dark:hover:bg-[#1b1c1c]">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 flex items-center justify-center p-sm rounded hover:bg-surface-container dark:hover:bg-[#1b1c1c]">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:block bg-surface-container-low dark:bg-[#0d0d0d] font-label-md text-label-md uppercase tracking-wider fixed left-0 top-0 h-full w-64 border-r border-outline-variant dark:border-[#2f3131] flat no shadows z-40 pt-16 flex flex-col justify-between transition-colors duration-300">
+<div class="flex flex-col h-full py-xl overflow-y-auto">
+<div class="px-lg mb-xl">
+<div class="flex items-center gap-md mb-sm">
+<img alt="System Node Status" class="w-10 h-10 rounded-full border border-outline-variant dark:border-[#2f3131] object-cover" data-alt="A macro shot of a sleek, glowing fiber optic cable end, emitting a warm amber light against a pitch-black background, representing a system node status. High contrast, sharp focus, industrial design style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPwQ7zSdn98YJWBP0P9TJKYH3yNEwkIcgN8LVt0FF5egiRuTSD6W6ltyFR_5fCLEFGYAtD44J9n8lZEC6E-87RamnknWf48ccnSR1nIw_iA-E-UwjVli010UnAFjHsmm0rtHP_1jRi-ERIqpti9GXffhH6qcwoob3WW8zmb3XGj64x79yfG00CRALxq6rbonhNLfCosbvHpawlB2lN53ap3naefCZ6-H1CaVLr1F3ooh9lqOdShuJevQ"/>
+<div>
+<div class="font-label-md text-label-md text-on-surface dark:text-tertiary-fixed font-bold">Core Engine</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-tertiary-container lowercase tracking-normal">v4.2.0-stable</div>
+</div>
+</div>
+<button class="w-full mt-md bg-primary dark:bg-secondary text-on-primary dark:text-on-secondary-container font-label-md text-label-md py-sm px-md rounded border border-transparent hover:border-secondary transition-colors flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                        New Analysis
+                    </button>
+</div>
+<div class="flex flex-col gap-unit px-sm">
+<a class="group flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container dark:hover:bg-[#1b1c1c] transition-all rounded" href="#">
+<span class="material-symbols-outlined">schema</span>
+                        Architecture
+                    </a>
+<a class="group flex items-center gap-md px-md py-sm text-primary dark:text-secondary-fixed font-bold border-r-4 border-secondary dark:border-secondary-fixed bg-surface-container-high dark:bg-[#1b1c1c] rounded-l rounded-r-none" href="#">
+<span class="material-symbols-outlined text-secondary dark:text-secondary-fixed">terminal</span>
+                        Query Lab
+                    </a>
+<a class="group flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container dark:hover:bg-[#1b1c1c] transition-all rounded" href="#">
+<span class="material-symbols-outlined">psychology</span>
+                        Intelligence
+                    </a>
+<a class="group flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container dark:hover:bg-[#1b1c1c] transition-all rounded" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+                        Telemetry
+                    </a>
+<a class="group flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container dark:hover:bg-[#1b1c1c] transition-all rounded" href="#">
+<span class="material-symbols-outlined">lock</span>
+                        Security
+                    </a>
+</div>
+<div class="mt-auto px-sm pt-xl border-t border-outline-variant dark:border-[#2f3131]">
+<div class="flex flex-col gap-unit">
+<a class="group flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container dark:hover:bg-[#1b1c1c] transition-all rounded" href="#">
+<span class="material-symbols-outlined">description</span>
+                            Documentation
+                        </a>
+<a class="group flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-tertiary-container hover:bg-surface-container dark:hover:bg-[#1b1c1c] transition-all rounded" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                            Support
+                        </a>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area (Chat + Telemetry) -->
+<main class="flex-1 md:ml-64 flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden">
+<!-- Chat Interface (Research Notebook Style) -->
+<section class="flex-1 flex flex-col border-r border-outline-variant dark:border-[#2f3131] bg-surface dark:bg-[#0d0d0d] overflow-hidden transition-colors duration-300">
+<div class="px-lg py-md border-b border-outline-variant dark:border-[#2f3131] flex justify-between items-center bg-surface/80 dark:bg-[#0d0d0d]/80 backdrop-blur-sm z-10 transition-colors duration-300">
+<h1 class="font-headline-lg text-headline-lg text-primary dark:text-tertiary-fixed">Session: Customer Churn Analysis</h1>
+<div class="flex gap-sm">
+<span class="font-label-md text-label-md bg-surface-container-low dark:bg-[#1b1c1c] text-on-surface-variant dark:text-on-tertiary-container px-sm py-unit rounded border border-outline-variant dark:border-[#2f3131]">MODEL: GPT-4-TURBO</span>
+<span class="font-label-md text-label-md bg-secondary-container/20 dark:bg-secondary-container/10 text-secondary dark:text-secondary-fixed px-sm py-unit rounded border border-secondary/30 flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">bolt</span> ACTIVE
+                        </span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-lg lg:px-xxl space-y-xl pb-32">
+<!-- User Prompt -->
+<div class="max-w-3xl ml-auto border-l-2 border-outline-variant dark:border-[#2f3131] pl-lg py-sm">
+<div class="flex items-center gap-sm mb-sm text-on-surface-variant dark:text-on-tertiary-container">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span class="font-label-md text-label-md tracking-widest uppercase">Analyst</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface dark:text-tertiary-fixed leading-relaxed">
+                            Analyze the recent spike in churn for the enterprise segment in Q3. I need a query to extract the key usage metrics for customers who downgraded, specifically focusing on API call volume drops prior to cancellation.
+                        </p>
+</div>
+<!-- System Response (Manuscript Style) -->
+<div class="max-w-3xl mr-auto">
+<div class="flex items-center gap-sm mb-sm text-secondary dark:text-secondary-fixed">
+<span class="material-symbols-outlined text-[18px] text-secondary dark:text-secondary-fixed">psychology</span>
+<span class="font-label-md text-label-md tracking-widest uppercase text-secondary dark:text-secondary-fixed">QueryMind</span>
+</div>
+<div class="font-body-lg text-body-lg text-on-surface-variant dark:text-[#c8c6c5] leading-relaxed space-y-md">
+<p>
+                                I have analyzed the enterprise segment parameters for Q3. The primary indicator of churn appears to be a precipitous drop in `api_v2_calls` approximately 14 days before the formal downgrade event.
+                            </p>
+<p>
+                                Here is the optimal SQL syntax to extract this cohort, cross-referencing the usage logs with the billing events table:
+                            </p>
+<!-- Code Block -->
+<div class="code-bg rounded border border-outline-variant dark:border-[#2f3131] my-md overflow-hidden transition-colors duration-300 bg-[#f8f9fa] dark:bg-[#0a0a0a]">
+<div class="flex justify-between items-center px-md py-sm bg-surface-container-high dark:bg-[#161616] border-b border-outline-variant dark:border-[#2f3131]">
+<span class="font-code-md text-code-md text-on-surface-variant dark:text-on-tertiary-container text-[12px]">PostgreSQL</span>
+<button class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-tertiary-fixed flex items-center gap-xs font-label-md text-[10px] uppercase transition-colors">
+<span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+                                    </button>
+</div>
+<pre class="p-md font-code-md text-code-md text-on-surface dark:text-[#e3e2e2] overflow-x-auto"><code><span class="text-[#735c00] dark:text-[#ffe088]">WITH</span> ChurnedUsers <span class="text-[#735c00] dark:text-[#ffe088]">AS</span> (
+    <span class="text-[#735c00] dark:text-[#ffe088]">SELECT</span> account_id, downgrade_date
+    <span class="text-[#735c00] dark:text-[#ffe088]">FROM</span> billing_events
+    <span class="text-[#735c00] dark:text-[#ffe088]">WHERE</span> event_type = <span class="text-[#2e7d32] dark:text-[#e9c349]">'downgrade'</span> 
+      <span class="text-[#735c00] dark:text-[#ffe088]">AND</span> segment = <span class="text-[#2e7d32] dark:text-[#e9c349]">'enterprise'</span>
+      <span class="text-[#735c00] dark:text-[#ffe088]">AND</span> date_part(<span class="text-[#2e7d32] dark:text-[#e9c349]">'quarter'</span>, downgrade_date) = <span class="text-[#bf360c] dark:text-[#fed65b]">3</span>
+)
+<span class="text-[#735c00] dark:text-[#ffe088]">SELECT</span> 
+    c.account_id,
+    <span class="text-[#bf360c] dark:text-[#fed65b]">AVG</span>(u.api_v2_calls) <span class="text-[#735c00] dark:text-[#ffe088]">AS</span> avg_calls_prior_14d,
+    <span class="text-[#bf360c] dark:text-[#fed65b]">AVG</span>(u.api_v2_calls_prev_month) <span class="text-[#735c00] dark:text-[#ffe088]">AS</span> baseline_calls
+<span class="text-[#735c00] dark:text-[#ffe088]">FROM</span> ChurnedUsers c
+<span class="text-[#735c00] dark:text-[#ffe088]">JOIN</span> usage_logs u <span class="text-[#735c00] dark:text-[#ffe088]">ON</span> c.account_id = u.account_id
+<span class="text-[#735c00] dark:text-[#ffe088]">WHERE</span> u.log_date <span class="text-[#735c00] dark:text-[#ffe088]">BETWEEN</span> (c.downgrade_date - <span class="text-[#735c00] dark:text-[#ffe088]">INTERVAL</span> <span class="text-[#2e7d32] dark:text-[#e9c349]">'14 days'</span>) 
+                  <span class="text-[#735c00] dark:text-[#ffe088]">AND</span> c.downgrade_date
+<span class="text-[#735c00] dark:text-[#ffe088]">GROUP BY</span> c.account_id
+<span class="text-[#735c00] dark:text-[#ffe088]">HAVING</span> <span class="text-[#bf360c] dark:text-[#fed65b]">AVG</span>(u.api_v2_calls) &lt; ( <span class="text-[#bf360c] dark:text-[#fed65b]">AVG</span>(u.api_v2_calls_prev_month) * <span class="text-[#bf360c] dark:text-[#fed65b]">0.5</span> );</code></pre>
+</div>
+<p>
+                                Running this query against the current telemetry indicates that 68% of downgraded accounts exhibited this exact pattern. Would you like me to generate a visualization of this drop-off curve?
+                            </p>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="mt-auto p-lg border-t border-outline-variant dark:border-[#2f3131] bg-surface dark:bg-[#0d0d0d] transition-colors duration-300">
+<div class="max-w-4xl mx-auto relative group">
+<textarea class="w-full bg-surface-container-low dark:bg-[#111111] border border-outline-variant dark:border-[#2f3131] rounded-lg p-md pr-16 font-body-md text-on-surface dark:text-tertiary-fixed placeholder-on-surface-variant dark:placeholder-on-tertiary-container focus:ring-0 focus:border-secondary dark:focus:border-secondary-fixed transition-colors resize-none min-h-[80px]" placeholder="Specify analytical parameters or request code..."></textarea>
+<div class="absolute right-sm bottom-sm flex gap-sm">
+<button class="p-sm text-on-surface-variant dark:text-on-tertiary-container hover:text-secondary dark:hover:text-secondary-fixed transition-colors">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<button class="p-sm bg-primary dark:bg-secondary text-on-primary dark:text-on-secondary-fixed rounded hover:bg-primary-container dark:hover:bg-secondary-fixed transition-colors">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</div>
+<div class="text-center mt-sm font-label-md text-[10px] text-on-surface-variant dark:text-on-tertiary-container uppercase tracking-widest">
+                        QueryMind Engine v4.2 · Secure Connection
+                    </div>
+</div>
+</section>
+<!-- Right Sidebar (High-density Telemetry) -->
+<aside class="hidden xl:flex w-80 bg-surface dark:bg-[#0d0d0d] border-l border-outline-variant dark:border-[#2f3131] flex-col overflow-y-auto transition-colors duration-300">
+<div class="p-md border-b border-outline-variant dark:border-[#2f3131] sticky top-0 bg-surface/90 dark:bg-[#0d0d0d]/90 backdrop-blur z-10 transition-colors duration-300">
+<h3 class="font-headline-lg text-lg text-primary dark:text-on-tertiary-container flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">speed</span> System Telemetry
+                    </h3>
+</div>
+<div class="p-md space-y-lg">
+<!-- Stat Block 1 -->
+<div>
+<div class="flex justify-between items-baseline mb-xs">
+<span class="font-label-md text-[10px] text-on-surface-variant dark:text-on-tertiary-container uppercase tracking-wider">Query Latency</span>
+<span class="font-code-md text-code-md text-secondary dark:text-secondary-fixed">42ms</span>
+</div>
+<div class="w-full h-1 bg-surface-container-high dark:bg-[#1b1c1c] rounded overflow-hidden">
+<div class="h-full bg-secondary dark:bg-secondary-fixed w-1/4"></div>
+</div>
+</div>
+<!-- Stat Block 2 -->
+<div>
+<div class="flex justify-between items-baseline mb-xs">
+<span class="font-label-md text-[10px] text-on-surface-variant dark:text-on-tertiary-container uppercase tracking-wider">Active Connections</span>
+<span class="font-code-md text-code-md text-primary dark:text-tertiary-fixed">1,024</span>
+</div>
+<div class="w-full h-1 bg-surface-container-high dark:bg-[#1b1c1c] rounded overflow-hidden">
+<div class="h-full bg-primary-fixed-dim dark:bg-tertiary-fixed w-3/4"></div>
+</div>
+</div>
+<!-- Mini Chart Area -->
+<div class="border border-outline-variant dark:border-[#2f3131] rounded p-sm bg-surface-container-low dark:bg-[#111111] transition-colors duration-300">
+<span class="font-label-md text-[10px] text-on-surface-variant dark:text-on-tertiary-container uppercase tracking-wider block mb-sm">Compute Load (Last 1hr)</span>
+<div class="h-16 flex items-end gap-[2px] opacity-70">
+<!-- Simulated bars -->
+<div class="w-full bg-secondary/60 dark:bg-secondary/40 h-[30%]"></div>
+<div class="w-full bg-secondary/60 dark:bg-secondary/40 h-[45%]"></div>
+<div class="w-full bg-secondary/80 dark:bg-secondary/60 h-[20%]"></div>
+<div class="w-full bg-secondary/60 dark:bg-secondary/40 h-[60%]"></div>
+<div class="w-full bg-secondary dark:bg-secondary/80 h-[90%]"></div>
+<div class="w-full bg-secondary/80 dark:bg-secondary/60 h-[50%]"></div>
+<div class="w-full bg-secondary/60 dark:bg-secondary/40 h-[40%]"></div>
+<div class="w-full bg-secondary dark:bg-secondary-fixed h-[100%]"></div>
+<div class="w-full bg-secondary dark:bg-secondary/80 h-[70%]"></div>
+<div class="w-full bg-secondary/60 dark:bg-secondary/40 h-[30%]"></div>
+</div>
+</div>
+<!-- Schema Context -->
+<div class="pt-md border-t border-outline-variant dark:border-[#2f3131]">
+<h4 class="font-headline-lg text-lg text-primary dark:text-on-tertiary-container mb-md">Active Schema Context</h4>
+<div class="space-y-sm">
+<div class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary dark:text-secondary-fixed mt-xs">dataset</span>
+<div>
+<div class="font-code-md text-[12px] text-on-surface dark:text-tertiary-fixed">billing_events</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant dark:text-on-tertiary-container">~4.2M rows · Partitioned</div>
+</div>
+</div>
+<div class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary dark:text-secondary-fixed mt-xs">dataset</span>
+<div>
+<div class="font-code-md text-[12px] text-on-surface dark:text-tertiary-fixed">usage_logs</div>
+<div class="font-body-sm text-[11px] text-on-surface-variant dark:text-on-tertiary-container">~89M rows · Indexed on account_id</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</main>
+</div>
+<script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    themeToggleBtn.addEventListener('click', () => {
+        htmlElement.classList.toggle('dark');
+    });
+</script>
+</body></html>

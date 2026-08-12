@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QueryMind - Architecture</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;family=Playfair+Display:ital,wght@0,700;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#ffe088",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#1a1c1c",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "on-background": "#1a1c1c",
+                    "tertiary": "#000000",
+                    "surface-bright": "#f9f9f9",
+                    "error-container": "#ffdad6",
+                    "on-secondary-container": "#745c00",
+                    "surface-container": "#eeeeee",
+                    "inverse-primary": "#c8c6c5",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#574500",
+                    "on-primary-container": "#858383",
+                    "on-secondary-fixed": "#241a00",
+                    "inverse-surface": "#2f3131",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "on-tertiary-container": "#848484",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "secondary-container": "#fed65b",
+                    "surface-container-high": "#e8e8e8",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#1b1c1c",
+                    "on-surface-variant": "#444748",
+                    "surface": "#f9f9f9",
+                    "surface-dim": "#dadada",
+                    "inverse-on-surface": "#f1f1f1",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary": "#000000",
+                    "primary-container": "#1c1b1b",
+                    "primary-fixed": "#e5e2e1",
+                    "on-primary-fixed-variant": "#474746",
+                    "outline-variant": "#c4c7c7",
+                    "surface-tint": "#5f5e5e",
+                    "surface-container-low": "#f3f3f3",
+                    "on-primary-fixed": "#1c1b1b",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "secondary": "#735c00",
+                    "tertiary-fixed": "#e3e2e2",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f9f9f9",
+                    "secondary-fixed-dim": "#e9c349",
+                    "outline": "#747878",
+                    "surface-variant": "#e2e2e2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "md": "16px",
+                    "unit": "4px",
+                    "xxl": "64px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "xl": "40px",
+                    "container-max": "1200px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "code-md": ["jetbrainsMono"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "serif-display": ["Playfair Display", "serif"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "code-md": ["14px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "30px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "400"}]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .schema-connector {
+            position: absolute;
+            background-color: theme('colors.outline-variant');
+            z-index: 0;
+            transition: background-color 0.3s ease;
+        }
+        .dark .schema-connector {
+            background-color: theme('colors.outline');
+        }
+        .schema-connector.active {
+            background-color: theme('colors.primary');
+            height: 2px;
+            z-index: 1;
+        }
+        .dark .schema-connector.active {
+            background-color: theme('colors.secondary-fixed');
+        }
+        
+        .node-hover-effect:hover {
+            box-shadow: 0 0 0 1px theme('colors.primary');
+        }
+        .dark .node-hover-effect:hover {
+            box-shadow: 0 0 0 1px theme('colors.secondary-fixed');
+        }
+
+        /* Custom Scrollbar for canvas */
+        .canvas-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .canvas-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .canvas-scroll::-webkit-scrollbar-thumb {
+            background-color: theme('colors.surface-variant');
+            border-radius: 4px;
+        }
+        .dark .canvas-scroll::-webkit-scrollbar-thumb {
+            background-color: theme('colors.on-primary-container');
+        }
+    </style>
+</head>
+<body class="bg-background dark:bg-tertiary-container text-on-background dark:text-on-tertiary-container font-body-md min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface dark:bg-tertiary-container border-b border-outline-variant dark:border-outline flat no shadows">
+<div class="flex justify-between items-center h-16 px-gutter max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-secondary-fixed">QueryMind</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 rounded-full hover:bg-surface-variant dark:hover:bg-primary-container transition-colors duration-200 cursor-pointer text-on-surface-variant dark:text-on-primary-container hover:text-primary dark:hover:text-secondary-fixed-dim" id="theme-toggle">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-variant dark:hover:bg-primary-container transition-colors duration-200 cursor-pointer text-on-surface-variant dark:text-on-primary-container hover:text-primary dark:hover:text-secondary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant dark:border-outline ml-sm">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A minimalist avatar image featuring a highly abstract geometric shape in black and white against a light grey background, matching the industrial editorial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5qYvZUEWc3088ZvQSQW817HyFzKnOtjnVhv62ssg0b4VWGLmhXYKxgAuXN8yI9XIZyhLK-KyQwqs59jtrOFcrmEXowCfmnvEFSA8V2bCINXSXaQsmrg1QlnetlqISU1_oa9YSAlCiUlfW7mqb4FBKBY95lJoDbXm0-jXmAlcUc_pZqyBEOFc13YJ6Y-sHXpqPPMJj5c5mY-hcF08FVzVBMywJAiE-Ws6cUL0nT-PnTaoGSQDBUs3Pgw"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Layout Container -->
+<div class="flex flex-1 pt-16 w-full max-w-[1600px] mx-auto relative">
+<!-- SideNavBar (Hidden on Mobile, flex on md+) -->
+<aside class="hidden md:flex flex-col py-md space-y-unit fixed left-0 top-16 h-full w-64 bg-surface-container-low dark:bg-tertiary-container border-r border-outline-variant dark:border-outline flat no shadows z-40">
+<div class="px-gutter mb-xl flex flex-col">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant dark:text-on-primary-container mb-xs">System Status</span>
+<span class="font-body-md text-body-md font-semibold text-primary dark:text-secondary-fixed">Core Engine</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-primary-container">v2.4.0-stable</span>
+</div>
+<nav class="flex-1 space-y-unit">
+<a class="flex items-center gap-md px-gutter py-sm text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-primary-container transition-colors duration-150 ease-in-out pl-4" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="workspaces">workspaces</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Workspace</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-md px-gutter py-sm bg-surface-container-high dark:bg-primary-container/50 text-primary dark:text-secondary-fixed border-l-2 border-primary dark:border-secondary-fixed pl-4 transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="architecture">architecture</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Architecture</span>
+</a>
+<a class="flex items-center gap-md px-gutter py-sm text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-primary-container transition-colors duration-150 ease-in-out pl-4" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="psychology">psychology</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Intelligence</span>
+</a>
+<a class="flex items-center gap-md px-gutter py-sm text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-primary-container transition-colors duration-150 ease-in-out pl-4" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="insights">insights</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Telemetry</span>
+</a>
+<a class="flex items-center gap-md px-gutter py-sm text-on-surface-variant dark:text-on-primary-container hover:bg-surface-container-high dark:hover:bg-primary-container transition-colors duration-150 ease-in-out pl-4" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="security">security</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Security</span>
+</a>
+</nav>
+<div class="px-gutter mt-auto mb-xl">
+<button class="w-full py-sm px-md bg-primary text-on-primary dark:bg-secondary-container dark:text-on-secondary-container font-label-md text-label-md uppercase tracking-wider rounded flex items-center justify-center gap-sm transition-opacity hover:opacity-90">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Analysis
+                </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 flex flex-col h-[calc(100vh-64px)] overflow-hidden bg-surface-container-lowest dark:bg-tertiary">
+<!-- Context Header -->
+<header class="px-gutter py-lg border-b border-outline-variant dark:border-outline flex flex-col sm:flex-row sm:justify-between sm:items-end gap-md shrink-0">
+<div>
+<h1 class="font-serif-display text-display-lg-mobile md:text-display-lg text-primary dark:text-surface-container-lowest mb-xs">Schema Architecture</h1>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-on-primary-container">Visualizing entity relationships and structural integrity for the Core Engine.</p>
+</div>
+<div class="flex items-center gap-sm p-1 bg-surface-container dark:bg-primary-container rounded border border-outline-variant dark:border-outline">
+<button class="px-md py-1 rounded bg-surface-container-lowest dark:bg-tertiary-container text-primary dark:text-secondary-fixed font-label-md text-label-md shadow-sm border border-outline-variant dark:border-outline">Logical</button>
+<button class="px-md py-1 rounded text-on-surface-variant dark:text-on-primary-container font-label-md text-label-md hover:text-primary dark:hover:text-secondary-fixed-dim transition-colors">Physical</button>
+</div>
+</header>
+<!-- Interactive Diagram Area -->
+<div class="flex-1 relative overflow-auto canvas-scroll bg-[radial-gradient(#e5e5e5_1px,transparent_1px)] dark:bg-[radial-gradient(#333_1px,transparent_1px)] [background-size:24px_24px]">
+<!-- Tools Overlay -->
+<div class="sticky top-md left-md z-10 flex gap-sm bg-surface/80 dark:bg-tertiary-container/80 backdrop-blur-sm p-sm rounded border border-outline-variant dark:border-outline w-max">
+<button class="p-1.5 rounded hover:bg-surface-variant dark:hover:bg-primary-container text-on-surface-variant dark:text-on-primary-container" title="Zoom In">
+<span class="material-symbols-outlined text-[20px]">zoom_in</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-variant dark:hover:bg-primary-container text-on-surface-variant dark:text-on-primary-container" title="Zoom Out">
+<span class="material-symbols-outlined text-[20px]">zoom_out</span>
+</button>
+<div class="w-px h-6 bg-outline-variant dark:bg-outline mx-1 self-center"></div>
+<button class="p-1.5 rounded hover:bg-surface-variant dark:hover:bg-primary-container text-on-surface-variant dark:text-on-primary-container" title="Reset View">
+<span class="material-symbols-outlined text-[20px]">center_focus_strong</span>
+</button>
+</div>
+<!-- Canvas Plane (Pan/Zoom conceptually happens here) -->
+<div class="relative w-[1200px] h-[800px] mx-auto mt-xl">
+<!-- Connectors (SVG for lines) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 0;">
+<!-- User to Session -->
+<path class="text-outline-variant dark:text-outline" d="M 300 200 C 450 200, 450 400, 600 400" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+<!-- User to Auth -->
+<path class="text-outline-variant dark:text-outline" d="M 300 150 C 450 150, 450 100, 600 100" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+<!-- Session to Telemetry -->
+<path class="text-outline-variant dark:text-outline" d="M 850 400 C 950 400, 950 300, 1050 300" fill="none" stroke="currentColor" stroke-dasharray="4,4" stroke-width="1.5"></path>
+</svg>
+<!-- Nodes -->
+<!-- Node 1: tbl_user_profile -->
+<div class="absolute left-[50px] top-[100px] w-[250px] bg-surface-container-lowest dark:bg-tertiary border border-outline-variant dark:border-outline rounded node-hover-effect transition-shadow duration-200 z-10">
+<div class="px-md py-sm border-b border-outline-variant dark:border-outline bg-surface-container-low dark:bg-tertiary-container flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-primary dark:text-secondary-fixed">table_rows</span>
+<span class="font-code-md text-code-md font-bold text-primary dark:text-secondary-fixed">tbl_user_profile</span>
+</div>
+<span class="font-label-md text-[10px] uppercase text-on-surface-variant bg-surface-variant dark:bg-primary-container dark:text-on-primary-container px-1 rounded">Core</span>
+</div>
+<div class="p-xs font-code-md text-[12px] leading-relaxed text-on-surface dark:text-on-tertiary-container">
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span><span class="text-secondary dark:text-secondary-container">id</span> (PK)</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">uuid</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>email_hash</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">varchar(256)</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>created_at</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">timestamp</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>status_code</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">int2</span>
+</div>
+</div>
+</div>
+<!-- Node 2: tbl_session_state -->
+<div class="absolute left-[600px] top-[300px] w-[250px] bg-surface-container-lowest dark:bg-tertiary border border-outline-variant dark:border-outline rounded node-hover-effect transition-shadow duration-200 z-10">
+<div class="px-md py-sm border-b border-outline-variant dark:border-outline bg-surface-container-low dark:bg-tertiary-container flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-primary dark:text-secondary-fixed">table_rows</span>
+<span class="font-code-md text-code-md font-bold text-primary dark:text-secondary-fixed">tbl_session_state</span>
+</div>
+<span class="font-label-md text-[10px] uppercase text-on-surface-variant bg-surface-variant dark:bg-primary-container dark:text-on-primary-container px-1 rounded">Volatile</span>
+</div>
+<div class="p-xs font-code-md text-[12px] leading-relaxed text-on-surface dark:text-on-tertiary-container">
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span><span class="text-secondary dark:text-secondary-container">session_id</span> (PK)</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">uuid</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer bg-surface-container-low dark:bg-primary-container/30 border-l-2 border-primary dark:border-secondary-fixed">
+<span>user_id (FK)</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">uuid</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>payload</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">jsonb</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>expires_at</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">timestamp</span>
+</div>
+</div>
+</div>
+<!-- Node 3: tbl_auth_ledger -->
+<div class="absolute left-[600px] top-[50px] w-[250px] bg-surface-container-lowest dark:bg-tertiary border border-outline-variant dark:border-outline rounded node-hover-effect transition-shadow duration-200 z-10 opacity-70 hover:opacity-100">
+<div class="px-md py-sm border-b border-outline-variant dark:border-outline bg-surface-container-low dark:bg-tertiary-container flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-primary dark:text-secondary-fixed">shield</span>
+<span class="font-code-md text-code-md font-bold text-primary dark:text-secondary-fixed">tbl_auth_ledger</span>
+</div>
+</div>
+<div class="p-xs font-code-md text-[12px] leading-relaxed text-on-surface dark:text-on-tertiary-container">
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>event_id (PK)</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">bigserial</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>user_id (FK)</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">uuid</span>
+</div>
+<div class="flex justify-between hover:bg-surface-container dark:hover:bg-primary-container px-sm py-1 cursor-pointer">
+<span>action_type</span>
+<span class="text-on-surface-variant dark:text-on-primary-container">varchar(32)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Contextual Properties Panel (Bottom Sheet style on desktop) -->
+<div class="h-48 border-t border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-tertiary-container shrink-0 p-gutter overflow-y-auto hidden md:block">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-lg text-headline-lg text-primary dark:text-secondary-fixed">Table Details: <span class="font-code-md">tbl_session_state</span></h3>
+<button class="text-on-surface-variant dark:text-on-primary-container hover:text-primary dark:hover:text-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="grid grid-cols-3 gap-xl">
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant dark:text-on-primary-container uppercase mb-xs">Description</span>
+<p class="font-body-sm text-body-sm text-on-surface dark:text-on-tertiary-container">Stores active session data for authenticated clients. Highly volatile, pruned every 15 minutes by chron job.</p>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant dark:text-on-primary-container uppercase mb-xs">Metrics</span>
+<ul class="font-body-sm text-body-sm text-on-surface dark:text-on-tertiary-container space-y-1">
+<li><span class="text-on-surface-variant dark:text-on-primary-container">Row Count:</span> ~1.2M (Live)</li>
+<li><span class="text-on-surface-variant dark:text-on-primary-container">Size:</span> 4.8 GB</li>
+</ul>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface-variant dark:text-on-primary-container uppercase mb-xs">Dependencies</span>
+<div class="flex flex-wrap gap-xs">
+<span class="font-code-md text-[12px] bg-surface-variant dark:bg-primary-container px-2 py-1 rounded text-primary dark:text-secondary-fixed border border-outline-variant dark:border-outline">tbl_user_profile</span>
+<span class="font-code-md text-[12px] bg-surface-variant dark:bg-primary-container px-2 py-1 rounded text-primary dark:text-secondary-fixed border border-outline-variant dark:border-outline">redis_cache_layer</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface dark:bg-tertiary-container border-t border-outline-variant dark:border-outline flat no shadows">
+<div class="flex justify-around items-center h-16">
+<a class="flex flex-col items-center p-2 text-on-surface-variant dark:text-on-primary-container" href="#">
+<span class="material-symbols-outlined" data-icon="workspaces">workspaces</span>
+</a>
+<a class="flex flex-col items-center p-2 text-primary dark:text-secondary-fixed font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant dark:text-on-primary-container" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant dark:text-on-primary-container" href="#">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</a>
+</div>
+</nav>
+<script>
+        // Simple Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            html.classList.toggle('light');
+            
+            // Swap icon
+            const icon = themeToggleBtn.querySelector('.material-symbols-outlined');
+            if (html.classList.contains('dark')) {
+                icon.textContent = 'light_mode';
+            } else {
+                icon.textContent = 'dark_mode';
+            }
+        });
+    </script>
+</body></html>

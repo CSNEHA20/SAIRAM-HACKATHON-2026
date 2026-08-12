@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>QueryMind - Telemetry Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#ffe088",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1a1c1c",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-background": "#1a1c1c",
+                        "tertiary": "#000000",
+                        "surface-bright": "#f9f9f9",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#745c00",
+                        "surface-container": "#eeeeee",
+                        "inverse-primary": "#c8c6c5",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#574500",
+                        "on-primary-container": "#858383",
+                        "on-secondary-fixed": "#241a00",
+                        "inverse-surface": "#2f3131",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-tertiary-container": "#848484",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "secondary-container": "#fed65b",
+                        "surface-container-high": "#e8e8e8",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#1b1c1c",
+                        "on-surface-variant": "#444748",
+                        "surface": "#f9f9f9",
+                        "surface-dim": "#dadada",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary": "#000000",
+                        "primary-container": "#1c1b1b",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed-variant": "#474746",
+                        "outline-variant": "#c4c7c7",
+                        "surface-tint": "#5f5e5e",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed": "#1c1b1b",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "secondary": "#735c00",
+                        "tertiary-fixed": "#e3e2e2",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "secondary-fixed-dim": "#e9c349",
+                        "outline": "#747878",
+                        "surface-variant": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "md": "16px",
+                        "unit": "4px",
+                        "xxl": "64px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "40px",
+                        "container-max": "1200px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "code-md": ["jetbrainsMono"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "code-md": ["14px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "30px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Base Styles for Minimalist/Industrial feel */
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Grid Layout for dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: theme('spacing.gutter');
+        }
+
+        /* Chart Placeholder styling */
+        .chart-placeholder {
+            background-image: repeating-linear-gradient(
+                45deg,
+                theme('colors.surface-variant'),
+                theme('colors.surface-variant') 1px,
+                transparent 1px,
+                transparent 10px
+            );
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-16 h-full w-64 border-r border-outline-variant bg-surface-container-low hidden md:flex flex-col py-md space-y-unit z-40">
+<div class="px-md mb-xl mt-md">
+<h2 class="font-headline-lg text-headline-lg text-primary">Core Engine</h2>
+<p class="font-label-md text-label-md text-on-surface-variant mt-xs">v2.4.0-stable</p>
+</div>
+<ul class="flex flex-col flex-grow">
+<li>
+<a class="flex items-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150 ease-in-out py-sm pl-4 pr-md cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-sm" data-icon="workspaces">workspaces</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Workspace</span>
+</a>
+</li>
+<li>
+<a class="flex items-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150 ease-in-out py-sm pl-4 pr-md cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-sm" data-icon="architecture">architecture</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Architecture</span>
+</a>
+</li>
+<li>
+<a class="flex items-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150 ease-in-out py-sm pl-4 pr-md cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-sm" data-icon="psychology">psychology</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Intelligence</span>
+</a>
+</li>
+<li>
+<a class="flex items-center text-primary border-l-2 border-primary bg-surface-container-high transition-colors duration-150 ease-in-out py-sm pl-4 pr-md cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-sm" data-icon="insights" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Telemetry</span>
+</a>
+</li>
+<li>
+<a class="flex items-center text-on-surface-variant hover:bg-surface-container-high transition-colors duration-150 ease-in-out py-sm pl-4 pr-md cursor-pointer" href="#">
+<span class="material-symbols-outlined mr-sm" data-icon="security">security</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Security</span>
+</a>
+</li>
+</ul>
+<div class="px-md mt-auto mb-xl">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md uppercase py-sm px-md border border-primary hover:bg-surface hover:text-primary transition-colors">
+                New Analysis
+            </button>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface border-b border-outline-variant flex justify-between items-center h-16 px-gutter max-w-container-max mx-auto left-0 right-0">
+<div class="flex items-center">
+<span class="font-headline-lg text-headline-lg font-bold text-primary mr-xl">QueryMind</span>
+</div>
+<div class="flex items-center space-x-md">
+<button aria-label="Toggle Dark Mode" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button aria-label="Notifications" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center overflow-hidden ml-sm cursor-pointer hover:border-primary transition-colors">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A minimalist profile icon or avatar, sharp lines, greyscale with high contrast, isolated on a light grey background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP0IZx-xR_GCDKzLYNeW9qekW0Bo4Gqqn5qw2FpRGaecKACRkQmRXOpj8mU2pFxfj5OIpiurvXOhzbFPxn-IPGBkw-rucZPWW8occ9OscH0Qm1A1Zlz1ZVooihoHfxlprCBk9i2aXQCF-31H7Gx3v0Vm5uJ86IgVBUs-Ff4jkNvvhzyFHA8WcyEL7BegbpeOg0gbB2Y4B_vePMSqfGB-iQZkuhCzYS_vYUxOICsnZXY0ceUycn3sdb_A"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-64 mt-16 overflow-y-auto bg-background p-gutter">
+<div class="max-w-container-max mx-auto h-full flex flex-col">
+<!-- Header Section -->
+<div class="mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary font-bold">Telemetry</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-sm">Real-time system performance and metric analysis.</p>
+</div>
+<!-- Dashboard Grid -->
+<div class="dashboard-grid flex-grow mb-xl">
+<!-- Main Chart: Throughput -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant p-lg flex flex-col">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary">Throughput (GB/s)</h3>
+<span class="font-code-md text-code-md text-on-surface-variant">Avg: 42.8 GB/s</span>
+</div>
+<div class="flex space-x-sm">
+<span class="px-sm py-xs bg-surface-container text-on-surface font-label-md text-label-md uppercase border border-outline-variant rounded-sm">1H</span>
+<span class="px-sm py-xs bg-primary text-on-primary font-label-md text-label-md uppercase border border-primary rounded-sm">24H</span>
+<span class="px-sm py-xs bg-surface-container text-on-surface font-label-md text-label-md uppercase border border-outline-variant rounded-sm">7D</span>
+</div>
+</div>
+<div class="flex-grow chart-placeholder border border-outline-variant/50 relative min-h-[300px]">
+<!-- Abstract representation of a chart -->
+<div class="absolute bottom-0 left-0 w-full h-[60%] border-t border-primary/20 bg-primary/5"></div>
+<div class="absolute bottom-0 left-0 w-[80%] h-[40%] border-t border-primary/40 bg-primary/10"></div>
+<div class="absolute bottom-0 left-[20%] w-[50%] h-[75%] border-t border-primary bg-primary/20"></div>
+<div class="absolute left-0 bottom-0 w-full flex justify-between px-sm py-xs text-on-surface-variant font-code-md text-[10px]">
+<span>00:00</span>
+<span>06:00</span>
+<span>12:00</span>
+<span>18:00</span>
+</div>
+</div>
+</div>
+<!-- KPI Cards Column -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Active Connections -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg flex-1">
+<div class="flex items-center mb-sm text-on-surface-variant">
+<span class="material-symbols-outlined mr-sm" data-icon="cable">cable</span>
+<h4 class="font-body-md text-body-md">Active Connections</h4>
+</div>
+<div class="flex items-baseline mt-auto">
+<span class="font-display-lg text-display-lg text-primary">1,482</span>
+<span class="font-code-md text-code-md text-secondary ml-sm">+12%</span>
+</div>
+<div class="w-full h-1 bg-surface-variant mt-sm">
+<div class="h-full bg-primary w-[75%]"></div>
+</div>
+</div>
+<!-- CPU Load -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg flex-1">
+<div class="flex items-center mb-sm text-on-surface-variant">
+<span class="material-symbols-outlined mr-sm" data-icon="memory">memory</span>
+<h4 class="font-body-md text-body-md">CPU Load</h4>
+</div>
+<div class="flex items-baseline mt-auto">
+<span class="font-display-lg text-display-lg text-primary">64.3%</span>
+<span class="font-code-md text-code-md text-on-surface-variant ml-sm">Stable</span>
+</div>
+<div class="w-full h-1 bg-surface-variant mt-sm">
+<div class="h-full bg-primary w-[64%]"></div>
+</div>
+</div>
+<!-- Token Velocity -->
+<div class="bg-surface-container-lowest border border-outline-variant p-lg flex-1">
+<div class="flex items-center mb-sm text-on-surface-variant">
+<span class="material-symbols-outlined mr-sm" data-icon="speed">speed</span>
+<h4 class="font-body-md text-body-md">Token Velocity</h4>
+</div>
+<div class="flex items-baseline mt-auto">
+<span class="font-display-lg text-display-lg text-primary">84k</span>
+<span class="font-code-md text-code-md text-on-surface-variant ml-sm">tok/s</span>
+</div>
+<div class="w-full h-1 bg-surface-variant mt-sm">
+<div class="h-full bg-primary w-[88%]"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Data Table/Logs -->
+<div class="col-span-12 bg-surface-container-lowest border border-outline-variant mt-gutter">
+<div class="border-b border-outline-variant p-md">
+<h4 class="font-body-md text-body-md font-bold text-primary">System Events Log</h4>
+</div>
+<div class="p-md font-code-md text-code-md text-on-surface-variant h-48 overflow-y-auto space-y-sm">
+<div class="flex border-b border-surface-variant pb-xs">
+<span class="w-24 text-on-tertiary-container">[14:02:11]</span>
+<span class="w-24 text-secondary">INFO</span>
+<span class="flex-1 text-primary">Node cluster 04 initialized successfully.</span>
+</div>
+<div class="flex border-b border-surface-variant pb-xs">
+<span class="w-24 text-on-tertiary-container">[14:05:32]</span>
+<span class="w-24 text-secondary">INFO</span>
+<span class="flex-1 text-primary">Data ingestion stream verified. Throughput optimal.</span>
+</div>
+<div class="flex border-b border-surface-variant pb-xs">
+<span class="w-24 text-on-tertiary-container">[14:12:05]</span>
+<span class="w-24 text-error">WARN</span>
+<span class="flex-1 text-primary">Latency spike detected in region us-east-2. Mitigating...</span>
+</div>
+<div class="flex border-b border-surface-variant pb-xs">
+<span class="w-24 text-on-tertiary-container">[14:12:45]</span>
+<span class="w-24 text-secondary">INFO</span>
+<span class="flex-1 text-primary">Traffic routed successfully. Latency nominal.</span>
+</div>
+<div class="flex pb-xs">
+<span class="w-24 text-on-tertiary-container">[14:20:00]</span>
+<span class="w-24 text-secondary">INFO</span>
+<span class="flex-1 text-primary">Automated snapshot complete. Size: 1.2TB.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full z-40 bg-surface-dim border-t border-outline-variant flex justify-between items-center px-gutter py-sm left-0 right-0 ml-0 md:ml-64">
+<p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 QueryMind Intelligence. All systems operational.</p>
+<div class="flex space-x-md font-body-sm text-body-sm text-on-surface-variant">
+<a class="hover:text-primary transition-opacity duration-200" href="#">Encryption: AES-256</a>
+<a class="hover:text-primary transition-opacity duration-200" href="#">System Status</a>
+<a class="hover:text-primary transition-opacity duration-200" href="#">Privacy Protocol</a>
+</div>
+</footer>
+</body></html>
