@@ -25,20 +25,33 @@ def _resolve_db_path(connection_string: Optional[str]) -> str:
         conn_path = Path(connection_string).expanduser().resolve()
         if conn_path.exists():
             return str(conn_path)
+
     env_path = os.getenv("DATABASE_PATH")
     if env_path:
-        path = Path(env_path)
-        if path.exists():
-            return str(path)
-        if not path.is_absolute():
-            resolved = (Path(__file__).parent.parent.parent.parent / env_path).resolve()
-            if resolved.exists():
-                return str(resolved)
-        default_resolved = DEFAULT_DB_PATH.resolve()
-        if default_resolved.exists():
-            return str(default_resolved)
-        return str(path)
+        candidates = [
+            Path(env_path),
+            (Path.cwd() / env_path).resolve(),
+            (Path(__file__).parent.parent.parent.parent / env_path).resolve(),
+            (Path(__file__).parent.parent.parent / env_path).resolve(),
+        ]
+        for c in candidates:
+            if c.exists():
+                return str(c)
+
+    default_candidates = [
+        DEFAULT_DB_PATH.resolve(),
+        (Path.cwd() / "database" / "ecommerce.sqlite").resolve(),
+        (Path.cwd() / "backend" / "database" / "ecommerce.sqlite").resolve(),
+        (Path.cwd() / ".." / "database" / "ecommerce.sqlite").resolve(),
+        (Path(__file__).parent.parent.parent / "database" / "ecommerce.sqlite").resolve(),
+        (Path(__file__).parent.parent.parent.parent / "database" / "ecommerce.sqlite").resolve(),
+    ]
+    for c in default_candidates:
+        if c.exists():
+            return str(c)
+
     return str(DEFAULT_DB_PATH.resolve())
+
 
 
 class SQLiteAdapter(DatabaseAdapter):

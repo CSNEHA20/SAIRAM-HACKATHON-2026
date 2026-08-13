@@ -28,6 +28,7 @@ ENV/
 Thumbs.db
 
 # Databases
-database/*.sqlite
+*.sqlite
+
 
 .vercel
