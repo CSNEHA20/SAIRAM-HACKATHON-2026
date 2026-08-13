@@ -154,6 +154,9 @@ async def execute_tool(name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
             "error": f"Unknown tool: {name}. Available tools: {', '.join(TOOL_MAP.keys())}"
         }
 
+    if not isinstance(inputs, dict):
+        inputs = {}
+
     tool_func = TOOL_MAP[name]
     try:
         return await asyncio.wait_for(tool_func(**inputs), timeout=TOOL_TIMEOUT_SECONDS)

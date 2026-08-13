@@ -379,18 +379,25 @@ Rules:
                             yield tok
                             await asyncio.sleep(0.005)
 
+                    tool_name = ""
+                    tool_inputs = {}
                     try:
                         raw_json = tool_match.group(1).strip()
                         raw_json = re.sub(r"^```(?:json)?\s*", "", raw_json)
                         raw_json = re.sub(r"\s*```$", "", raw_json)
                         call_data = json.loads(raw_json)
-                        tool_name = call_data.get("tool", "")
-                        tool_inputs = call_data.get("arguments", {})
-                    except (json.JSONDecodeError, KeyError) as parse_err:
+                        if isinstance(call_data, dict):
+                            tool_name = str(call_data.get("tool", ""))
+                            tool_inputs = call_data.get("arguments", {})
+                            if not isinstance(tool_inputs, dict):
+                                tool_inputs = {}
+                        else:
+                            tool_match = None
+                    except Exception as parse_err:
                         print(f"[Tool Call Parse Error]: {parse_err}. Raw: {tool_match.group(1)[:200]}")
                         tool_match = None
 
-                if tool_match:
+                if tool_match and tool_name:
                     # Append assistant message
                     oai_messages.append({"role": "assistant", "content": raw_text})
 
