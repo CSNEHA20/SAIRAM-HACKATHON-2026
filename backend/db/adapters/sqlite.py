@@ -64,12 +64,33 @@ class SQLiteAdapter(DatabaseAdapter):
         self.db_path = _resolve_db_path(self.connection_string)
 
     async def initialize(self) -> None:
+        try:
+            res = await self.execute_query("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+            tbl_cnt = res["rows"][0]["cnt"] if res.get("rows") else 0
+            if tbl_cnt == 0:
+                schema_candidates = [
+                    Path(__file__).parent.parent.parent.parent / "database" / "schema.sql",
+                    Path(__file__).parent.parent.parent / "database" / "schema.sql",
+                    Path.cwd() / "database" / "schema.sql",
+                    Path.cwd() / "backend" / "database" / "schema.sql",
+                    Path("/app/database/schema.sql"),
+                ]
+                for sc in schema_candidates:
+                    if sc.exists():
+                        with open(sc, "r", encoding="utf-8") as f:
+                            sql_script = f.read()
+                        await self.execute_script(sql_script)
+                        print(f"Successfully auto-seeded SQLite database from {sc}")
+                        break
+        except Exception as e:
+            print(f"SQLite auto-seed check info: {e}")
         await self.ensure_indexes()
 
     async def check_health(self) -> bool:
         try:
-            res = await self.execute_query("SELECT 1 AS health_check;")
-            return res.get("row_count", 0) > 0 and res["rows"][0].get("health_check") == 1
+            res = await self.execute_query("SELECT count(*) as cnt FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+            tbl_cnt = res["rows"][0]["cnt"] if res.get("rows") else 0
+            return tbl_cnt > 0
         except Exception:
             return False
 
