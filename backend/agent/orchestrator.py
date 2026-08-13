@@ -81,7 +81,7 @@ class AgentOrchestrator:
         self.nvidia_model = (
             os.getenv("NVIDIA_MODEL")
             or os.getenv("NEMOTRON_MODEL")
-            or os.getenv("OPENAI_MODEL", "meta/llama-3.3-70b-instruct")
+            or os.getenv("OPENAI_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b")
         )
         self.is_nvidia_mock = (
             not HAS_OPENAI
