@@ -8,7 +8,7 @@ import aiosqlite
 
 from db.adapters import DatabaseAdapter
 
-DEFAULT_DB_PATH = Path(__file__).parent.parent.parent.parent / "database" / "ecommerce.sqlite"
+DEFAULT_DB_PATH = Path(__file__).parent.parent.parent / "database" / "ecommerce.sqlite"
 
 # Performance indexes defined in 07_DatabaseDesign.md §6
 IDEMPOTENT_INDEXES = [
@@ -31,8 +31,8 @@ def _resolve_db_path(connection_string: Optional[str]) -> str:
         candidates = [
             Path(env_path),
             (Path.cwd() / env_path).resolve(),
-            (Path(__file__).parent.parent.parent.parent / env_path).resolve(),
             (Path(__file__).parent.parent.parent / env_path).resolve(),
+            (Path(__file__).parent.parent / env_path).resolve(),
         ]
         for c in candidates:
             if c.exists():
@@ -45,13 +45,14 @@ def _resolve_db_path(connection_string: Optional[str]) -> str:
         (Path.cwd() / "backend" / "database" / "ecommerce.sqlite").resolve(),
         (Path.cwd() / ".." / "database" / "ecommerce.sqlite").resolve(),
         (Path(__file__).parent.parent.parent / "database" / "ecommerce.sqlite").resolve(),
-        (Path(__file__).parent.parent.parent.parent / "database" / "ecommerce.sqlite").resolve(),
     ]
     for c in default_candidates:
         if c.exists():
             return str(c)
 
-    return str(DEFAULT_DB_PATH.resolve())
+    target = DEFAULT_DB_PATH.resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    return str(target)
 
 
 

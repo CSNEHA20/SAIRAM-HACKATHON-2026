@@ -11,7 +11,7 @@ from db.adapters.mongodb import MongoDBAdapter
 
 load_dotenv()
 
-DEFAULT_DB_PATH = Path(__file__).parent.parent.parent / "database" / "ecommerce.sqlite"
+DEFAULT_DB_PATH = Path(__file__).parent.parent / "database" / "ecommerce.sqlite"
 
 
 def get_db_path() -> str:
@@ -25,11 +25,21 @@ def get_db_path() -> str:
             resolved = (Path(__file__).parent.parent / env_path).resolve()
             if resolved.exists():
                 return str(resolved)
-        default_resolved = DEFAULT_DB_PATH.resolve()
-        if default_resolved.exists():
-            return str(default_resolved)
-        return str(path)
-    return str(DEFAULT_DB_PATH.resolve())
+
+    candidates = [
+        Path("/app/database/ecommerce.sqlite"),
+        DEFAULT_DB_PATH.resolve(),
+        (Path.cwd() / "database" / "ecommerce.sqlite").resolve(),
+        (Path.cwd() / "backend" / "database" / "ecommerce.sqlite").resolve(),
+        (Path(__file__).parent.parent.parent / "database" / "ecommerce.sqlite").resolve(),
+    ]
+    for c in candidates:
+        if c.exists():
+            return str(c)
+
+    target = DEFAULT_DB_PATH.resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    return str(target)
 
 
 def create_adapter(
