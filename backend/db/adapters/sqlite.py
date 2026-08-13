@@ -39,6 +39,7 @@ def _resolve_db_path(connection_string: Optional[str]) -> str:
                 return str(c)
 
     default_candidates = [
+        Path("/app/database/ecommerce.sqlite"),
         DEFAULT_DB_PATH.resolve(),
         (Path.cwd() / "database" / "ecommerce.sqlite").resolve(),
         (Path.cwd() / "backend" / "database" / "ecommerce.sqlite").resolve(),

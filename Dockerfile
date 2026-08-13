@@ -2,12 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy requirements and install dependencies
-COPY requirements.txt* backend/requirements.txt* ./
-RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; elif [ -f backend/requirements.txt ]; then pip install --no-cache-dir -r backend/requirements.txt; fi
+# Copy requirements and install dependencies first for layer caching
+COPY backend/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code and database directory
-COPY . /app/
+# Copy backend code and database directory into /app
+COPY backend/ /app/
 COPY database/ /app/database/
 
 # Create non-root runtime user
