@@ -10,6 +10,17 @@
 
 ---
 
+### 🌐 Live Deployment Links
+
+| Service | Environment | Live URL | Hosting Platform |
+|---|---|---|---|
+| 🎨 **Frontend Workspace** | Production | [https://query-mind-ai-seven.vercel.app](https://query-mind-ai-seven.vercel.app) | **Vercel** |
+| ⚡ **Backend API Service** | Production | [https://query-mind-82zr.onrender.com](https://query-mind-82zr.onrender.com) | **Render** |
+| 🩺 **Backend Health Check** | Production | [https://query-mind-82zr.onrender.com/api/health](https://query-mind-82zr.onrender.com/api/health) | **Render** |
+| 📚 **Swagger API Docs** | Production | [https://query-mind-82zr.onrender.com/docs](https://query-mind-82zr.onrender.com/docs) | **FastAPI** |
+
+---
+
 ### 🏷️ Tech Stack & Keywords
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
