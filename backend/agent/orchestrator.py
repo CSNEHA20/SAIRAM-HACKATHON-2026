@@ -366,7 +366,7 @@ Rules:
 
                 # Check if model wants to call a tool
                 tool_match = re.search(
-                    r"<tool_call>\s*(\{.*?\})\s*</tool_call>",
+                    r"<tool_call>\s*(.*?)\s*</tool_call>",
                     raw_text,
                     re.DOTALL
                 )
@@ -380,17 +380,17 @@ Rules:
                             await asyncio.sleep(0.005)
 
                     try:
-                        call_data = json.loads(tool_match.group(1))
+                        raw_json = tool_match.group(1).strip()
+                        raw_json = re.sub(r"^```(?:json)?\s*", "", raw_json)
+                        raw_json = re.sub(r"\s*```$", "", raw_json)
+                        call_data = json.loads(raw_json)
                         tool_name = call_data.get("tool", "")
                         tool_inputs = call_data.get("arguments", {})
                     except (json.JSONDecodeError, KeyError) as parse_err:
-                        yield format_sse({
-                            "type": "error",
-                            "code": "PARSE_ERROR",
-                            "message": f"Could not parse tool call JSON: {parse_err}. Raw: {tool_match.group(1)[:200]}"
-                        })
-                        return
+                        print(f"[Tool Call Parse Error]: {parse_err}. Raw: {tool_match.group(1)[:200]}")
+                        tool_match = None
 
+                if tool_match:
                     # Append assistant message
                     oai_messages.append({"role": "assistant", "content": raw_text})
 
@@ -445,7 +445,8 @@ Rules:
 
                 else:
                     # No tool call — this is the final answer
-                    final_text = raw_text.strip()
+                    final_text = re.sub(r"<tool_call>.*?</tool_call>", "", raw_text, flags=re.DOTALL).strip()
+                    final_text = re.sub(r"</?tool_call>", "", final_text).strip()
                     if not final_text:
                         final_text = "Analysis complete."
 
