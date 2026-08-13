@@ -55,46 +55,51 @@ class AgentOrchestrator:
 
     def _refresh_clients(self):
         """Reload provider clients from current environment variables."""
-        self.api_key = os.getenv("ANTHROPIC_API_KEY", "")
-        self.model = os.getenv("ANTHROPIC_MODEL", DEFAULT_MODEL)
-        self.offline_demo_mode = os.getenv("OFFLINE_DEMO_MODE", "false").lower() in ("true", "1", "yes")
-        self.is_mock_key = (
-            not HAS_ANTHROPIC
-            or not self.api_key
-            or self.api_key == "mock_key_for_dev"
-            or "your_anthropic_api_key" in self.api_key
-        )
-        if not self.is_mock_key and HAS_ANTHROPIC and anthropic:
-            self.client = anthropic.AsyncAnthropic(api_key=self.api_key)
-        else:
-            self.client = None
-
-        # NVIDIA Nemotron / OpenAI-compatible configuration
-        self.nvidia_key = (
-            os.getenv("NVIDIA_API_KEY")
-            or os.getenv("NEMOTRON_API_KEY")
-            or os.getenv("OPENAI_API_KEY", "")
-        )
-        self.nvidia_base_url = os.getenv(
-            "NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1"
-        )
-        self.nvidia_model = (
-            os.getenv("NVIDIA_MODEL")
-            or os.getenv("NEMOTRON_MODEL")
-            or os.getenv("OPENAI_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b")
-        )
-        self.is_nvidia_mock = (
-            not HAS_OPENAI
-            or not self.nvidia_key
-            or self.nvidia_key == "mock_key_for_dev"
-            or "your_nvidia_api_key" in self.nvidia_key
-        )
-        if not self.is_nvidia_mock and HAS_OPENAI and AsyncOpenAI:
-            self.openai_client = AsyncOpenAI(
-                api_key=self.nvidia_key,
-                base_url=self.nvidia_base_url
+        try:
+            self.api_key = os.getenv("ANTHROPIC_API_KEY", "")
+            self.model = os.getenv("ANTHROPIC_MODEL", DEFAULT_MODEL)
+            self.offline_demo_mode = os.getenv("OFFLINE_DEMO_MODE", "false").lower() in ("true", "1", "yes")
+            self.is_mock_key = (
+                not HAS_ANTHROPIC
+                or not self.api_key
+                or self.api_key == "mock_key_for_dev"
+                or "your_anthropic_api_key" in self.api_key
             )
-        else:
+            if not self.is_mock_key and HAS_ANTHROPIC and anthropic:
+                self.client = anthropic.AsyncAnthropic(api_key=self.api_key)
+            else:
+                self.client = None
+
+            # NVIDIA Nemotron / OpenAI-compatible configuration
+            self.nvidia_key = (
+                os.getenv("NVIDIA_API_KEY")
+                or os.getenv("NEMOTRON_API_KEY")
+                or os.getenv("OPENAI_API_KEY", "")
+            )
+            self.nvidia_base_url = os.getenv(
+                "NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1"
+            )
+            self.nvidia_model = (
+                os.getenv("NVIDIA_MODEL")
+                or os.getenv("NEMOTRON_MODEL")
+                or os.getenv("OPENAI_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b")
+            )
+            self.is_nvidia_mock = (
+                not HAS_OPENAI
+                or not self.nvidia_key
+                or self.nvidia_key == "mock_key_for_dev"
+                or "your_nvidia_api_key" in self.nvidia_key
+            )
+            if not self.is_nvidia_mock and HAS_OPENAI and AsyncOpenAI:
+                self.openai_client = AsyncOpenAI(
+                    api_key=self.nvidia_key,
+                    base_url=self.nvidia_base_url
+                )
+            else:
+                self.openai_client = None
+        except Exception as err:
+            print(f"[Client Init Error]: {err}")
+            self.client = None
             self.openai_client = None
 
     def is_claude_reachable(self) -> bool:
@@ -117,24 +122,26 @@ class AgentOrchestrator:
         """
         Main ReAct Loop async generator emitting 8-event SSE stream.
         """
-        # Always refresh environment settings on incoming stream request
-        self._refresh_clients()
-
-        message_id = f"msg_{uuid.uuid4().hex[:10]}"
-        clean_msg = message.strip()
-
-        # Save user message to session
-        session_store.add_message(session_id, "user", clean_msg)
-
-        # Get sliding-window history for context
-        history = session_store.get_messages(session_id)
-        api_messages: List[Dict[str, Any]] = []
-        for msg in history[:-1]:  # exclude the just-added message to format cleanly
-            api_messages.append({"role": msg["role"], "content": msg["content"]})
-        api_messages.append({"role": "user", "content": clean_msg})
-
-        # Run real Anthropic API loop if valid key exists, otherwise NVIDIA/OpenAI, otherwise offline demo mode or error.
         try:
+            # Always refresh environment settings on incoming stream request
+            self._refresh_clients()
+
+            message_id = f"msg_{uuid.uuid4().hex[:10]}"
+            clean_msg = message.strip()
+
+            # Save user message to session
+            session_store.add_message(session_id, "user", clean_msg)
+
+            # Get sliding-window history for context
+            history = session_store.get_messages(session_id)
+            api_messages: List[Dict[str, Any]] = []
+            for msg in history[:-1]:
+                role = str(msg.get("role", "user"))
+                content = str(msg.get("content", ""))
+                if role in ("user", "assistant") and content:
+                    api_messages.append({"role": role, "content": content})
+            api_messages.append({"role": "user", "content": clean_msg})
+
             has_real_provider = (not self.is_mock_key and self.client is not None) or (
                 not self.is_nvidia_mock and self.openai_client is not None
             )
@@ -153,17 +160,17 @@ class AgentOrchestrator:
                     "type": "error",
                     "code": "CLAUDE_UNCONFIGURED",
                     "message": (
-                        "No LLM provider is configured. Set a valid ANTHROPIC_API_KEY in your .env file, "
+                        "No LLM provider is configured. Set a valid ANTHROPIC_API_KEY or NVIDIA_API_KEY in your env file, "
                         "or enable OFFLINE_DEMO_MODE=true for a deterministic demo without an API key."
                     )
                 })
                 return
         except Exception as e:
-            # Last-resort error event so the stream always terminates gracefully
+            print(f"[Process Message Stream Exception]: {e}")
             yield format_sse({
                 "type": "error",
-                "code": "TOOL_ERROR",
-                "message": f"Unexpected orchestrator error: {str(e)}"
+                "code": "ORCHESTRATOR_ERROR",
+                "message": f"Orchestrator error: {str(e)}"
             })
 
     async def _run_claude_loop(
