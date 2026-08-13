@@ -2,11 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy requirements and install dependencies first for layer caching
+# Set PYTHONPATH so Python can locate modules in /app and /app/backend
+ENV PYTHONPATH=/app:/app/backend
+
+# Copy requirements and install dependencies
 COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code and database directory into /app
+# Copy backend source code and database directory into /app
 COPY backend/ /app/
 COPY database/ /app/database/
 
@@ -14,7 +17,6 @@ COPY database/ /app/database/
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
 EXPOSE 8000
 
 # Health probe

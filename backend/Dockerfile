@@ -2,19 +2,22 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Set PYTHONPATH so Python can locate modules in /app and /app/backend
+ENV PYTHONPATH=/app:/app/backend
+
 # Copy requirements and install dependencies
 COPY requirements.txt* backend/requirements.txt* ./
 RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; elif [ -f backend/requirements.txt ]; then pip install --no-cache-dir -r backend/requirements.txt; fi
 
-# Copy backend code and database directory
+# Copy files into /app
 COPY . /app/
+RUN if [ -d /app/backend ]; then cp -r /app/backend/* /app/; fi
 COPY database/ /app/database/
 
 # Create non-root runtime user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
 EXPOSE 8000
 
 # Health probe
