@@ -29,3 +29,5 @@ Thumbs.db
 
 # Databases
 database/*.sqlite
+
+.vercel
